@@ -90,7 +90,7 @@ This command returns non-compliant configuration file items detected, grouped by
       Get-ChildItem -Path $PSScriptRoot -Filter 'results*.xml' |
         Sort-Object -Property 'LastWriteTime' -Descending |
         Select-Object -First 1 |
-        Select-Object -ExpandProperty
+        Select-Object -ExpandProperty 'FullName'
     ),
 
     [String]
