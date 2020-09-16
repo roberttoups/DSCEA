@@ -188,7 +188,7 @@ This command returns non-compliant configuration file items detected, grouped by
         @{Name = 'Computer'; Expression = { $_.PSComputerName } },
         @{Name = 'Compliant'; Expression = { $_.InDesiredState } }
       ) |
-      ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
+      ConvertTo-HTML -Head $WebStyle -Body $BodyHeader |
       Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
@@ -210,7 +210,7 @@ This command returns non-compliant configuration file items detected, grouped by
               )
             }
           } |
-          ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
+          ConvertTo-HTML -Head $WebStyle -Body $BodyHeader |
           Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
@@ -243,7 +243,7 @@ This command returns non-compliant configuration file items detected, grouped by
                     }
                   }
                 } | Where-Object { $_.InstanceName -ieq $ItemName } |
-                ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
+                ConvertTo-HTML -Head $WebStyle -Body $BodyHeader |
                 Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
@@ -272,7 +272,7 @@ This command returns non-compliant configuration file items detected, grouped by
                   'InDesiredState'
                 )
               }
-            } | ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
+            } | ConvertTo-HTML -Head $WebStyle -Body $BodyHeader |
             Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }

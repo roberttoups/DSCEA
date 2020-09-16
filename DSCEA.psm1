@@ -1,4 +1,4 @@
-[string]$webstyle = @'
+[string]$WebStyle = @'
 <style>
 BODY{background-color:#0078D7; margin-left:50px; margin-right:auto;}
 TABLE{border-width:1px; border-style:solid; border-color:black; border-collapse:collapse; color:black;}
@@ -12,5 +12,5 @@ datesection{color:white; font-family: "Segoe UI", Tahoma, Verdana, Arial, sans-s
 $functionRoot = Join-Path -Path $PSScriptRoot -ChildPath 'Functions' -Resolve
 
 Get-ChildItem -Path $functionRoot -Filter '*.ps1' | ForEach-Object {
-    . $_.FullName | Out-Null
+  . $_.FullName | Out-Null
 }
