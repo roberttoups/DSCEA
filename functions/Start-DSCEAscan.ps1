@@ -396,7 +396,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
     $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
-    Write-Verbose "Connectivity testing complete"
+    Write-Verbose -Message "Connectivity testing complete"
     if($VersionErrorList) {
       Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
     }
@@ -412,7 +412,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         $JobParameters += @{Force = $true }
       }
       $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
-      Write-Verbose "Initiating DSCEA scan on $_"
+      Write-Verbose -Message "Initiating DSCEA scan on $_"
 		    $ScanJob.RunSpacePool = $RunspacePool
       $Jobs += [PSCustomObject]@{
         Pipe   = $ScanJob
@@ -437,7 +437,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
     $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
-    Write-Verbose "Connectivity testing complete"
+    Write-Verbose -Message "Connectivity testing complete"
     if($VersionErrorList) {
       Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
     }
@@ -453,7 +453,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         $JobParameters += @{Force = $true }
       }
       $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
-      Write-Verbose "Initiating DSCEA scan on $_"
+      Write-Verbose -Message "Initiating DSCEA scan on $_"
 		    $ScanJob.RunSpacePool = $RunspacePool
       $Jobs += [PSCustomObject]@{
         Pipe   = $ScanJob
@@ -465,7 +465,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   # Wait for Jobs to Complete
   #----------------------------------------------------------------------------------------------------------------------#
-  Write-Verbose "Processing Compliance Testing..."
+  Write-Verbose -Message "Processing Compliance Testing..."
   $OverallTimeout = New-TimeSpan -Seconds $ScanTimeout
   $ElapsedTime = [system.diagnostics.stopwatch]::StartNew()
   do {
@@ -492,7 +492,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   # Save Results
   #----------------------------------------------------------------------------------------------------------------------#
-  Write-Verbose "$([String]::Format("Total Scan Time: {0:d2}:{1:d2}:{2:d2}", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds))"
+  Write-Verbose -Message "$([String]::Format("Total Scan Time: {0:d2}:{1:d2}:{2:d2}", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds))"
   $Results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
   Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
 
