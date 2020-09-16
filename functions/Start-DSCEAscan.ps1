@@ -369,8 +369,8 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   if($PSBoundParameters.ContainsKey('ComputerName')) {
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
-    $firstrunlist = $ComputerName
-    $psresults = Invoke-Command -ComputerName $firstrunlist -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
+    $FirstRunList = $ComputerName
+    $psresults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
       $PSVersionTable.PSVersion
     } | Wait-Job -Timeout $JobTimeout
     $psjobresults = Receive-Job $psresults
@@ -408,8 +408,8 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   if($PSBoundParameters.ContainsKey('InputFile')) {
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
-    $firstrunlist = Get-Content $InputFile
-    $psresults = Invoke-Command -ComputerName $firstrunlist -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
+    $FirstRunList = Get-Content $InputFile
+    $psresults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
       $PSVersionTable.PSVersion
     } | Wait-Job -Timeout $JobTimeout
     $psjobresults = Receive-Job $psresults
