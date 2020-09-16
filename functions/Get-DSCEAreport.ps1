@@ -169,7 +169,7 @@ This command returns non-compliant configuration file items detected, grouped by
   # Overall
   #----------------------------------------------------------------------------------------------------------------------#
   if($Overall) {
-    $results |
+    $Results |
       select-object -ExpandProperty Compliance | Where-Object { $_.PSComputerName -ne $null } |
       select-object @{Name = "Computer"; Expression = { $_.PSComputerName } }, @{Name = "Compliant"; Expression = { $_.InDesiredState } } |
       ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>DSC Configuration Report</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
@@ -180,7 +180,7 @@ This command returns non-compliant configuration file items detected, grouped by
   # Detailed
   #----------------------------------------------------------------------------------------------------------------------#
   if($Detailed) {
-    $results | ForEach-Object {
+    $Results | ForEach-Object {
       $_.Compliance | ForEach-Object {
         $_.ResourcesNotInDesiredState |
           Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
@@ -193,7 +193,7 @@ This command returns non-compliant configuration file items detected, grouped by
   # ItemName
   #----------------------------------------------------------------------------------------------------------------------#
   if($ItemName) {
-    $results | ForEach-Object {
+    $Results | ForEach-Object {
       $_.Compliance | ForEach-Object {
         $_.ResourcesInDesiredState | ForEach-Object { $_ | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState }
         $_.ResourcesNotInDesiredState | ForEach-Object { $_ | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState }
@@ -207,7 +207,7 @@ This command returns non-compliant configuration file items detected, grouped by
   # ComputerName
   #----------------------------------------------------------------------------------------------------------------------#
   if($ComputerName) {
-    $results | where-object { $_.Computer -ieq $ComputerName } | ForEach-Object {
+    $Results | where-object { $_.Computer -ieq $ComputerName } | ForEach-Object {
       $_.Compliance | ForEach-Object {
         $_.ResourcesNotInDesiredState | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
         $_.ResourcesInDesiredState | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
