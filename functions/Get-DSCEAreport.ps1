@@ -168,6 +168,9 @@ This command returns non-compliant configuration file items detected, grouped by
     Get-ChildItem -Path $InFilePath |
       Select-Object -ExpandProperty 'LastWriteTime'
   )
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Build standard report body header
+  #----------------------------------------------------------------------------------------------------------------------#
   $BodyHeader = @(
     "<img src='$WebLogoPath'/><br>",
     "<titlesection>$HtmlTitle</titlesection><br>",
