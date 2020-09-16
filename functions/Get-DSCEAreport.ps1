@@ -141,18 +141,18 @@ This command returns non-compliant configuration file items detected, grouped by
 
         $ArgumentCollection = @{
           Path        = $LogoPath
-          Destination = $DestinationPath
+          Destination = $WebLogoPath
           Force       = $true
           ErrorAction = 'Stop'
         }
         try {
           Copy-Item @ArgumentCollection
         } catch {
-          $SpecificReason = "Failed to copy $LogoPath to $DestinationPath."
+          $SpecificReason = "Failed to copy $LogoPath to $WebLogoPath."
           $ErrorMessage = $PSItem.Exception.Message
           throw "($ErrorMessage): $SpecificReason Exiting."
         }
-        if(Test-Path -Path $DestinationPath) {
+        if(Test-Path -Path $WebLogoPath) {
           break
         }
       }
