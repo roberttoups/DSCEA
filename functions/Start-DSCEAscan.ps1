@@ -247,10 +247,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       [switch]
       $Force
     )
-
-    Get-ChildItem -Path $functionRoot -Filter '*.ps1' | ForEach-Object {
-      . $_.FullName | Out-Null
-    }
+    #----------------------------------------------------------------------------------------------------------------------#
+    # Load the Module Functions inside the Script Block
+    #----------------------------------------------------------------------------------------------------------------------#
+    Get-ChildItem -Path $FunctionRoot -Filter '*.ps1' -File |
+      ForEach-Object {
+        . $_.FullName |
+          Out-Null
+        }
 
     $runTime = Measure-Command {
       try {
