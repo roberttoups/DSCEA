@@ -197,7 +197,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   Write-Verbose -Message 'DSCEA Scan has started'
 
-  $runspacePool = [RunspaceFactory]::CreateRunspacePool(1, 10).Open() #Min Runspaces, Max Runspaces
+  $RunspacePool = [RunspaceFactory]::CreateRunspacePool(1, 10).Open() #Min Runspaces, Max Runspaces
   $scriptBlock = {
     param (
       [ValidateNotNullOrEmpty()]
@@ -294,7 +294,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       }
       $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
       Write-Verbose "Initiating DSCEA scan on $_"
-		    $job.RunSpacePool = $runspacePool
+		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
@@ -318,7 +318,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       }
       $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
       Write-Verbose ('Initiating DSCEA scan on {0}' -f $_.ComputerName)
-		    $job.RunSpacePool = $runspacePool
+		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
@@ -357,7 +357,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       }
       $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
       Write-Verbose "Initiating DSCEA scan on $_"
-		    $job.RunSpacePool = $runspacePool
+		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
@@ -396,7 +396,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       }
       $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
       Write-Verbose "Initiating DSCEA scan on $_"
-		    $job.RunSpacePool = $runspacePool
+		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
