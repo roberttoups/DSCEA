@@ -534,7 +534,8 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   # Save Results
   #----------------------------------------------------------------------------------------------------------------------#
-  Write-Verbose -Message "$([String]::Format("Total Scan Time: {0:d2}:{1:d2}:{2:d2}", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds))"
+  $TotalScanTime = "$($ElapsedTime.Elapsed.ToString().Split('.')[0])"
+  Write-Verbose -Message "Total Scan Time: $TotalScanTime"
   $Results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
   Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
 
