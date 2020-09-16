@@ -171,7 +171,7 @@ This command returns non-compliant configuration file items detected, grouped by
   if($Overall) {
     $Results |
       Select-Object -ExpandProperty Compliance |
-      Where-Object { $_.PSComputerName -ne $null } |
+      Where-Object { $null -ne $_.PSComputerName } |
       Select-Object -Property (
         @{Name = "Computer"; Expression = { $_.PSComputerName } },
         @{Name = "Compliant"; Expression = { $_.InDesiredState } }
