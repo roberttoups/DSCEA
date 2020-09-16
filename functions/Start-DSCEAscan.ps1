@@ -370,19 +370,19 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
     $FirstRunList = $ComputerName
-    $psresults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
+    $PSResults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
       $PSVersionTable.PSVersion
     } | Wait-Job -Timeout $JobTimeout
-    $psjobresults = Receive-Job $psresults
+    $PSJobResults = Receive-Job $PSResults
 
-    $runlist = ($psjobresults | where-object -Property Major -ge 5).PSComputername
-    $versionerrorlist = ($psjobresults | where-object -Property Major -lt 5).PSComputername
+    $RunList = ($PSJobResults | where-object -Property Major -ge 5).PSComputername
+    $VersionErrorList = ($PSJobResults | where-object -Property Major -lt 5).PSComputername
 
-    $PSVersionErrorsFile = Join-Path -Path $LogsPath -Childpath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
+    $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
     Write-Verbose "Connectivity testing complete"
-    if($versionerrorlist) {
-      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$versionerrorlist' for details"
+    if($VersionErrorList) {
+      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
     }
     $RunList | Sort-Object | ForEach-Object {
       $params = @{
@@ -409,19 +409,19 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
     $FirstRunList = Get-Content $InputFile
-    $psresults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
+    $PSResults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
       $PSVersionTable.PSVersion
     } | Wait-Job -Timeout $JobTimeout
-    $psjobresults = Receive-Job $psresults
+    $PSJobResults = Receive-Job $PSResults
 
-    $runlist = ($psjobresults | where-object -Property Major -ge 5).PSComputername
-    $versionerrorlist = ($psjobresults | where-object -Property Major -lt 5).PSComputername
+    $RunList = ($PSJobResults | where-object -Property Major -ge 5).PSComputername
+    $VersionErrorList = ($PSJobResults | where-object -Property Major -lt 5).PSComputername
 
-    $PSVersionErrorsFile = Join-Path -Path $LogsPath -Childpath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
+    $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
     Write-Verbose "Connectivity testing complete"
-    if($versionerrorlist) {
-      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$versionerrorlist' for details"
+    if($VersionErrorList) {
+      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
     }
     $RunList | Sort-Object | ForEach-Object {
       $params = @{
@@ -447,40 +447,40 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
   #Wait for Jobs to Complete
   Write-Verbose "Processing Compliance Testing..."
-  $overalltimeout = new-timespan -Seconds $ScanTimeout
-  $elapsedTime = [system.diagnostics.stopwatch]::StartNew()
+  $OverallTimeout = New-TimeSpan -Seconds $ScanTimeout
+  $ElapsedTime = [system.diagnostics.stopwatch]::StartNew()
   do {
     Start-Sleep -Milliseconds 500
-    $jobscomplete = ($jobs.result.iscompleted | Where-Object { $_ -eq $true }).count
+    $JobsComplete = ($jobs.result.IsCompleted | Where-Object { $_ -eq $true }).count
 
     #pecentage complete can be added as the number of jobs completed out of the number of total jobs
-    Write-Progress -activity "Working..." -PercentComplete (($jobscomplete / $jobs.count) * 100) -status "$([String]::Format("Time Elapsed: {0:d2}:{1:d2}:{2:d2}     Jobs Complete: {3} of {4} ", $elapsedTime.Elapsed.hours, $elapsedTime.Elapsed.minutes, $elapsedTime.Elapsed.seconds, $jobscomplete, $jobs.count))";
+    Write-Progress -activity "Working..." -PercentComplete (($JobsComplete / $jobs.count) * 100) -status "$([String]::Format("Time Elapsed: {0:d2}:{1:d2}:{2:d2}     Jobs Complete: {3} of {4} ", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds, $JobsComplete, $jobs.count))";
 
-    if($elapsedTime.elapsed -gt $overalltimeout) {
-      Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($overalltimeout.TotalSeconds) seconds was exceeded."
+    if($ElapsedTime.elapsed -gt $OverallTimeout) {
+      Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($OverallTimeout.TotalSeconds) seconds was exceeded."
       return
     }
-  } while (($jobs.Result.IsCompleted -contains $false) -and ($elapsedTime.elapsed -lt $overalltimeout)) #while elasped time < 1 hour by default
+  } while (($jobs.Result.IsCompleted -contains $false) -and ($ElapsedTime.elapsed -lt $OverallTimeout)) #while elasped time < 1 hour by default
 
   #Retrieve Jobs
   $jobs | ForEach-Object {
     $results += $_.Pipe.EndInvoke($_.Result)
   }
 
-  ForEach ($exceptionwarning in $results.Exception) {
-    Write-Warning $exceptionwarning
+  ForEach ($ExceptionWarning in $results.Exception) {
+    Write-Warning $ExceptionWarning
   }
 
   #Save Results
-  Write-Verbose "$([String]::Format("Total Scan Time: {0:d2}:{1:d2}:{2:d2}", $elapsedTime.Elapsed.hours, $elapsedTime.Elapsed.minutes, $elapsedTime.Elapsed.seconds))"
+  Write-Verbose "$([String]::Format("Total Scan Time: {0:d2}:{1:d2}:{2:d2}", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds))"
   $results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
   Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
 
   #This function will display a divide by zero message if no computers are provided that are runnning PowerShell 5 or above
-  if($versionerrorlist) {
+  if($VersionErrorList) {
     #add in comma separated option for multiple systems
     Write-Warning "The DSCEA scan completed but did not scan all systems.  Please check '$PSVersionErrorsFile' for details"
-    $versionerrorlist | Export-Clixml -Path $PSVersionErrorsFile -Force
+    $VersionErrorList | Export-Clixml -Path $PSVersionErrorsFile -Force
   }
 
   if($results.Exception) {
