@@ -108,7 +108,8 @@ This command returns non-compliant configuration file items detected, grouped by
   $ProgramPath = Join-Path -Path 'C:\ProgramData' -ChildPath 'DSCEA'
   $HtmlTitle = 'DSC Configuration Report'
   #----------------------------------------------------------------------------------------------------------------------#
-  # Collect Module Directory Paths
+  # Collect Module Directory Paths (Windows separates PSMModulePath with a semi-colon - Linux/Unix uses colon)
+  # (Currently this is Windows Only -- Linux/MacOS DSC Scanning in the future? A decision will be made here)
   #----------------------------------------------------------------------------------------------------------------------#
   $FileSystemSeparator = ';'
   $PSModulePathList = @($env:PSModulePath.Split($FileSystemSeparator))
