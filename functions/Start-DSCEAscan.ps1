@@ -272,7 +272,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           } else {
             $PSSession = New-PSSession -ComputerName $ComputerName
           }
-          Copy-DSCResource -PSSession $PSSession -ModulestoCopy $ModulesRequired
+          Copy-DSCResource -PSSession $PSSession -ModulesToCopy $ModulesRequired
           Remove-PSSession $PSSession
         }
         #----------------------------------------------------------------------------------------------------------------------#
