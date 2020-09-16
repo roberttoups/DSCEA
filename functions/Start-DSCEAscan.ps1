@@ -254,7 +254,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       ForEach-Object {
         . $_.FullName |
           Out-Null
-        }
+      }
 
     $runTime = Measure-Command {
       try {
@@ -282,11 +282,11 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         if (!$DSCJob) {
           $JobFailedError = "$ComputerName was unable to complete in the alloted job timeout period of $JobTimeout seconds"
           for ($i = 1; $i -lt 10; $i++) {
-            Repair-DSCEngine -ComputerName $ComputerName -ErrorAction SilentlyContinue
+            Repair-DSCEngine -ComputerName $ComputerName -ErrorAction 'SilentlyContinue'
           }
           return
         }
-        $Compliance = Receive-Job $DSCJob -ErrorVariable JobFailedError
+        $Compliance = Receive-Job $DSCJob -ErrorVariable 'JobFailedError'
         Remove-Job $DSCJob
       } catch {
         $JobFailedError = $_
