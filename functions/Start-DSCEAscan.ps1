@@ -531,11 +531,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   # Retrieve Jobs
   #----------------------------------------------------------------------------------------------------------------------#
-  $Jobs | ForEach-Object {
-    $Results += $_.Pipe.EndInvoke($_.Result)
-  }
-
-  ForEach ($ExceptionWarning in $Results.Exception) {
+  $Jobs |
+    ForEach-Object {
+      $Results += $_.Pipe.EndInvoke($_.Result)
+    }
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Display Exceptions from the Results
+  #----------------------------------------------------------------------------------------------------------------------#
+  foreach($ExceptionWarning in $Results.Exception) {
     Write-Warning $ExceptionWarning
   }
   #----------------------------------------------------------------------------------------------------------------------#
