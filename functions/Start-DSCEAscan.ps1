@@ -491,25 +491,37 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         }
       }
   }
-
   #----------------------------------------------------------------------------------------------------------------------#
   # Wait for Jobs to Complete
   #----------------------------------------------------------------------------------------------------------------------#
   Write-Verbose -Message "Processing Compliance Testing..."
   $OverallTimeout = New-TimeSpan -Seconds $ScanTimeout
-  $ElapsedTime = [system.diagnostics.stopwatch]::StartNew()
+  $ElapsedTime = [System.Diagnostics.Stopwatch]::StartNew()
   do {
     Start-Sleep -Milliseconds 500
-    $JobsComplete = ($Jobs.result.IsCompleted | Where-Object { $_ -eq $true }).count
-
-    #percentage complete can be added as the number of jobs completed out of the number of total jobs
-    Write-Progress -activity "Working..." -PercentComplete (($JobsComplete / $Jobs.count) * 100) -status "$([String]::Format("Time Elapsed: {0:d2}:{1:d2}:{2:d2}     Jobs Complete: {3} of {4} ", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds, $JobsComplete, $Jobs.count))";
+    $JobsComplete = (
+      $Jobs.Result.IsCompleted |
+        Where-Object { $_ -eq $true }
+    ).Count
+    #----------------------------------------------------------------------------------------------------------------------#
+    # Percentage complete can be added as the number of jobs completed out of the number of total jobs
+    #----------------------------------------------------------------------------------------------------------------------#
+    $TimeElapsed = "$($ElapsedTime.Elapsed.ToString().Split('.')[0])"
+    $ArgumentCollection = @{
+      Activity        = 'Working...'
+      PercentComplete = (($JobsComplete / $Jobs.count) * 100)
+      Status          = "Time Elapsed: $TimeElapsed     Jobs Complete: $JobsComplete of $($Jobs.Count)"
+    }
+    Write-Progress @ArgumentCollection
 
     if($ElapsedTime.elapsed -gt $OverallTimeout) {
       Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($OverallTimeout.TotalSeconds) seconds was exceeded."
       return
     }
-  } while (($Jobs.Result.IsCompleted -contains $false) -and ($ElapsedTime.elapsed -lt $OverallTimeout)) #while elapsed time < 1 hour by default
+  } while (
+    ($Jobs.Result.IsCompleted -contains $false) -and
+    ($ElapsedTime.Elapsed -lt $OverallTimeout)
+  ) # while elapsed time < 1 hour by default
 
   #Retrieve Jobs
   $Jobs | ForEach-Object {
