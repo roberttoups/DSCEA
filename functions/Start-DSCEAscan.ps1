@@ -200,28 +200,52 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   $RunspacePool = [RunspaceFactory]::CreateRunspacePool(1, 10).Open() #Min Runspaces, Max Runspaces
   $ScriptBlock = {
     param (
+      [parameter(
+        Mandatory = $true
+      )]
       [ValidateNotNullOrEmpty()]
+      [Alias('Computer')]
       [String]
-      $computer,
+      $ComputerName,
 
-      [ValidateScript( { Test-Path $_ })]
+      [parameter(
+        Mandatory = $true
+      )]
+      [ValidateScript(
+        { Test-Path -Path $_ -PathType 'Leaf' -Filter '*.mof' }
+      )]
       [String]
-      $mofFile,
+      $MofFile,
 
+      [parameter(
+        Mandatory = $true
+      )]
       [ValidateNotNullOrEmpty()]
       [String]
       $JobTimeout,
 
-      [switch]
-      $Force,
-
+      [parameter(
+        Mandatory = $true
+      )]
       $ModulesRequired,
 
+      [parameter(
+        Mandatory = $false
+      )]
       [Microsoft.Management.Infrastructure.CimSession]
       $CimSession,
 
+      [parameter(
+        Mandatory = $true
+      )]
       [String]
-      $functionRoot
+      $FunctionRoot,
+
+      [parameter(
+        Mandatory = $false
+      )]
+      [switch]
+      $Force
     )
 
     Get-ChildItem -Path $functionRoot -Filter '*.ps1' | ForEach-Object {
