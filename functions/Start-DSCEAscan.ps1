@@ -104,14 +104,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     )]
     [ValidateNotNullOrEmpty()]
     [String]
-    $OutputPath = '.',
+    $OutputPath = (Join-Path -Path '.' -ChildPath ''),
 
     [parameter(
       Mandatory = $false
     )]
     [ValidateNotNullOrEmpty()]
     [String]
-    $LogsPath = '.',
+    $LogsPath = (Join-Path -Path '.' -ChildPath ''),
 
     [parameter(
       Mandatory = $true,
