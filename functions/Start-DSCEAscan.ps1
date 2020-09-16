@@ -453,14 +453,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     Start-Sleep -Milliseconds 500
     $JobsComplete = ($jobs.result.IsCompleted | Where-Object { $_ -eq $true }).count
 
-    #pecentage complete can be added as the number of jobs completed out of the number of total jobs
+    #percentage complete can be added as the number of jobs completed out of the number of total jobs
     Write-Progress -activity "Working..." -PercentComplete (($JobsComplete / $jobs.count) * 100) -status "$([String]::Format("Time Elapsed: {0:d2}:{1:d2}:{2:d2}     Jobs Complete: {3} of {4} ", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds, $JobsComplete, $jobs.count))";
 
     if($ElapsedTime.elapsed -gt $OverallTimeout) {
       Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($OverallTimeout.TotalSeconds) seconds was exceeded."
       return
     }
-  } while (($jobs.Result.IsCompleted -contains $false) -and ($ElapsedTime.elapsed -lt $OverallTimeout)) #while elasped time < 1 hour by default
+  } while (($jobs.Result.IsCompleted -contains $false) -and ($ElapsedTime.elapsed -lt $OverallTimeout)) #while elapsed time < 1 hour by default
 
   #Retrieve Jobs
   $jobs | ForEach-Object {
@@ -476,7 +476,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   $results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
   Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
 
-  #This function will display a divide by zero message if no computers are provided that are runnning PowerShell 5 or above
+  #This function will display a divide by zero message if no computers are provided that are running PowerShell 5 or above
   if($VersionErrorList) {
     #add in comma separated option for multiple systems
     Write-Warning "The DSCEA scan completed but did not scan all systems.  Please check '$PSVersionErrorsFile' for details"
