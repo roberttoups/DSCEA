@@ -520,7 +520,6 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       Status          = "Time Elapsed: $TimeElapsed     Jobs Complete: $JobsComplete of $($Jobs.Count)"
     }
     Write-Progress @ArgumentCollection
-
     if($ElapsedTime.Elapsed -gt $OverallTimeout) {
       Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($OverallTimeout.TotalSeconds) seconds was exceeded."
       return
@@ -529,8 +528,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     ($Jobs.Result.IsCompleted -contains $false) -and
     ($ElapsedTime.Elapsed -lt $OverallTimeout)
   ) # while elapsed time < 1 hour by default
-
-  #Retrieve Jobs
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Retrieve Jobs
+  #----------------------------------------------------------------------------------------------------------------------#
   $Jobs | ForEach-Object {
     $Results += $_.Pipe.EndInvoke($_.Result)
   }
