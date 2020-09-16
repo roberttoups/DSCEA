@@ -108,7 +108,7 @@ This command returns non-compliant configuration file items detected, grouped by
   # Collect Module Directory Paths
   #----------------------------------------------------------------------------------------------------------------------#
   $FileSystemSeparator = ';'
-  $PSModulePathList = $env:PSModulePath.Split($FileSystemSeparator)
+  $PSModulePathList = @($env:PSModulePath.Split($FileSystemSeparator))
   #----------------------------------------------------------------------------------------------------------------------#
   # Test for the existance of the Web logo and copy it if needed
   #----------------------------------------------------------------------------------------------------------------------#
@@ -197,7 +197,7 @@ This command returns non-compliant configuration file items detected, grouped by
           ForEach-Object {
             $_.ResourcesNotInDesiredState |
               Select-Object -Property (
-                @{Name = "Computer"; Expression = { $_.PSComputerName } },
+                @{Name = 'Computer'; Expression = { $_.PSComputerName } },
                 'ResourceName',
                 'InstanceName',
                 'InDesiredState'
@@ -216,15 +216,38 @@ This command returns non-compliant configuration file items detected, grouped by
   # ItemName
   #----------------------------------------------------------------------------------------------------------------------#
   if($ItemName) {
-    $Results | ForEach-Object {
-      $_.Compliance | ForEach-Object {
-        $_.ResourcesInDesiredState | ForEach-Object { $_ | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState }
-        $_.ResourcesNotInDesiredState | ForEach-Object { $_ | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState }
-      }
-    } | Where-object { $_.InstanceName -ieq $ItemName } |
-    ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>$HtmlTitle</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
-    Out-File (Join-Path -Path $OutPath -ChildPath "ItemComplianceReport-$ItemName.html")
-    Get-ItemProperty (Join-Path -Path $OutPath -ChildPath "ItemComplianceReport-$ItemName.html")
+    $HtmlExportPath = Join-Path -Path $OutPath -ChildPath 'ItemComplianceReport.html'
+    $Results |
+      ForEach-Object {
+        $_.Compliance |
+          ForEach-Object {
+            $_.ResourcesInDesiredState |
+              ForEach-Object { $_
+                | Select-Object -Property (
+                  @{Name = 'Computer'; Expression = { $_.PSComputerName } },
+                  'ResourceName',
+                  'InstanceName',
+                  'InDesiredState'
+                )
+              }
+              $_.ResourcesNotInDesiredState |
+                ForEach-Object { $_ |
+                    Select-Object -Property (
+                      @{Name = 'Computer'; Expression = { $_.PSComputerName } },
+                      'ResourceName',
+                      'InstanceName',
+                      'InDesiredState'
+                    )
+                  }
+                }
+              } | Where-Object { $_.InstanceName -ieq $ItemName } |
+              ConvertTo-HTML -Head $webstyle -Body (
+                "<img src='$WebLogoPath'/><br>",
+                "<titlesection>$HtmlTitle</titlesection><br>",
+                "<datesection>Report last run on $ReportDate</datesection><p>"
+              ) |
+              Set-Content -Path $HtmlExportPath -Encoding 'unicode'
+    Get-ItemProperty -Path $HtmlExportPath
   }
   #----------------------------------------------------------------------------------------------------------------------#
   # ComputerName
@@ -232,8 +255,8 @@ This command returns non-compliant configuration file items detected, grouped by
   if($ComputerName) {
     $Results | where-object { $_.Computer -ieq $ComputerName } | ForEach-Object {
       $_.Compliance | ForEach-Object {
-        $_.ResourcesNotInDesiredState | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
-        $_.ResourcesInDesiredState | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
+        $_.ResourcesNotInDesiredState | Select-Object @{Name = 'Computer'; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
+        $_.ResourcesInDesiredState | Select-Object @{Name = 'Computer'; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
       }
     } | ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>$HtmlTitle</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
     Out-File (Join-Path -Path $OutPath -ChildPath "ComputerComplianceReport-$ComputerName.html")
