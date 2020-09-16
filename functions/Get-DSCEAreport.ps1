@@ -56,8 +56,7 @@ Description
 This command returns non-compliant configuration file items detected, grouped by computer
 #>
   [CmdLetBinding()]
-  param
-  (
+  param(
     [parameter(
       Mandatory = $true,
       ParameterSetName = 'ItemName'
@@ -90,8 +89,9 @@ This command returns non-compliant configuration file items detected, grouped by
     $InFile = (
       Get-ChildItem -Path $PSScriptRoot -Filter 'results*.xml' |
         Sort-Object -Property 'LastWriteTime' -Descending |
-        Select-Object -First 1
-    ).FullName,
+        Select-Object -First 1 |
+        Select-Object -ExpandProperty
+    ),
 
     [String]
     $OutPath = (Join-Path -Path $PSScriptRoot -ChildPath '')
@@ -100,13 +100,57 @@ This command returns non-compliant configuration file items detected, grouped by
   # Start the Clock
   #----------------------------------------------------------------------------------------------------------------------#
   $RunTime = [System.Diagnostics.Stopwatch]::StartNew()
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Default Variables
+  #----------------------------------------------------------------------------------------------------------------------#
+  $ProgramPath = Join-Path -Path 'C:\ProgramData' -ChildPath 'DSCEA'
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Collect Module Directory Paths
+  #----------------------------------------------------------------------------------------------------------------------#
+  $FileSystemSeparator = ';'
+  $PSModulePathList = $env:PSModulePath.Split($FileSystemSeparator)
+  $PSModulePathList
+  $WebLogoPath = Join-Path -Path $ProgramPath -ChildPath 'logo.png'
+  if((Test-Path -Path $WebLogoPath) -eq $false) {
+    foreach($PSModulePath in $PSModulePathList) {
+      $TestPath = Join-Path -Path $PSModulePath -ChildPath 'DSCEA'
+      if(Test-Path -Path $TestPath) {
+        if((Test-Path -Path $ProgramPath) -eq $false) {
+          $ArgumentCollection = @{
+            Path        = $ProgramPath
+            Type        = 'Directory'
+            ErrorAction = 'Stop'
+          }
+          try {
+            New-Item @ArgumentCollection
+          } catch {
+            $SpecificReason = "Failed to create $ProgramPath."
+            $ErrorMessage = $PSItem.Exception.Message
+            throw "($ErrorMessage): $SpecificReason Exiting."
+          }
+        }
+        $LogoPath = Get-ChildItem -Path $PSModulePath-Filter 'logo.png' -Recurse -File |
+          Select-Object -First 1 |
+          Select-Object -ExpandProperty 'FullName'
 
-  $env:PSModulePath -split ';' | ForEach-Object {
-    if(Test-Path (Join-Path -Path $_ -ChildPath 'DSCEA')) {
-      if (!(Test-Path -Path 'C:\ProgramData\DSCEA')) {
-        New-Item 'C:\ProgramData\DSCEA' -Type Directory
+        $ArgumentCollection = @{
+          Path        = $LogoPath
+          Destination = $DestinationPath
+          Force       = $true
+          ErrorAction = 'Stop'
+        }
+        try {
+          Copy-Item @ArgumentCollection
+        } catch {
+          $SpecificReason = "Failed to copy $LogoPath to $DestinationPath."
+          $ErrorMessage = $PSItem.Exception.Message
+          throw "($ErrorMessage): $SpecificReason Exiting."
+        }
+        if(Test-Path -Path $DestinationPath) {
+          $LogoFound = $true
+          break
+        }
       }
-      Copy-Item -Path (Get-ChildItem -Path $_ -Recurse -Filter 'logo.png').FullName -Destination 'C:\ProgramData\DSCEA\logo.png' -Force
     }
   }
   $results = Import-Clixml $InFile
