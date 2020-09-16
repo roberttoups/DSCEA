@@ -266,7 +266,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         #----------------------------------------------------------------------------------------------------------------------#
         # Copy resources if required
         #----------------------------------------------------------------------------------------------------------------------#
-        if ($null -eq $ModulesRequired) {
+        if($null -eq $ModulesRequired) {
           if($CimSession) {
             $PSSession = New-PSSession -ComputerName $CimSession.ComputerName
           } else {
@@ -329,7 +329,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         ModulesRequired = Get-MOFRequiredModules -mofFile $_.FullName
         FunctionRoot    = $functionRoot
       }
-      if ($PSBoundParameters.ContainsKey('Force')) {
+      if($PSBoundParameters.ContainsKey('Force')) {
         $params += @{Force = $true }
       }
       $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
@@ -381,7 +381,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     $PSVersionErrorsFile = Join-Path -Path $LogsPath -Childpath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
     Write-Verbose "Connectivity testing complete"
-    if ($versionerrorlist) {
+    if($versionerrorlist) {
       Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$versionerrorlist' for details"
     }
     $RunList | Sort-Object | ForEach-Object {
@@ -392,7 +392,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         ModulesRequired = $ModulesRequired
         FunctionRoot    = $functionRoot
       }
-      if ($PSBoundParameters.ContainsKey('Force')) {
+      if($PSBoundParameters.ContainsKey('Force')) {
         $params += @{Force = $true }
       }
       $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
@@ -420,7 +420,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     $PSVersionErrorsFile = Join-Path -Path $LogsPath -Childpath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
     Write-Verbose "Connectivity testing complete"
-    if ($versionerrorlist) {
+    if($versionerrorlist) {
       Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$versionerrorlist' for details"
     }
     $RunList | Sort-Object | ForEach-Object {
@@ -431,7 +431,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         ModulesRequired = $ModulesRequired
         FunctionRoot    = $functionRoot
       }
-      if ($PSBoundParameters.ContainsKey('Force')) {
+      if($PSBoundParameters.ContainsKey('Force')) {
         $params += @{Force = $true }
       }
       $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
@@ -456,7 +456,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     #pecentage complete can be added as the number of jobs completed out of the number of total jobs
     Write-Progress -activity "Working..." -PercentComplete (($jobscomplete / $jobs.count) * 100) -status "$([String]::Format("Time Elapsed: {0:d2}:{1:d2}:{2:d2}     Jobs Complete: {3} of {4} ", $elapsedTime.Elapsed.hours, $elapsedTime.Elapsed.minutes, $elapsedTime.Elapsed.seconds, $jobscomplete, $jobs.count))";
 
-    if ($elapsedTime.elapsed -gt $overalltimeout) {
+    if($elapsedTime.elapsed -gt $overalltimeout) {
       Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($overalltimeout.TotalSeconds) seconds was exceeded."
       return
     }
@@ -477,13 +477,13 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
 
   #This function will display a divide by zero message if no computers are provided that are runnning PowerShell 5 or above
-  if ($versionerrorlist) {
+  if($versionerrorlist) {
     #add in comma separated option for multiple systems
     Write-Warning "The DSCEA scan completed but did not scan all systems.  Please check '$PSVersionErrorsFile' for details"
     $versionerrorlist | Export-Clixml -Path $PSVersionErrorsFile -Force
   }
 
-  if ($results.Exception) {
+  if($results.Exception) {
     Write-Warning "The DSCEA scan completed but job errors were detected.  Please check '$ResultsFile' for details"
   }
 
