@@ -388,9 +388,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     # $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $FirstRunList = $ComputerName
-    $PSResults = Invoke-Command -ComputerName $FirstRunList -ErrorAction 'SilentlyContinue' -AsJob -ScriptBlock {
-      $PSVersionTable.PSVersion
-    } | Wait-Job -Timeout $JobTimeout
+    $ArgumentCollection = @{
+      ComputerName = $FirstRunList
+      ErrorAction  = 'SilentlyContinue'
+      AsJob        = $true
+      ScriptBlock  = { $PSVersionTable.PSVersion }
+    }
+    $PSResults = Invoke-Command @ArgumentCollection |
+      Wait-Job -Timeout $JobTimeout
     $PSJobResults = Receive-Job $PSResults
 
     $RunList = ($PSJobResults | where-object -Property Major -ge 5).PSComputername
