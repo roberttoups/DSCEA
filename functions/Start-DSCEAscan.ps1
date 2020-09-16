@@ -223,7 +223,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         Mandatory = $true
       )]
       [ValidateNotNullOrEmpty()]
-      [String]
+      [Int32]
       $JobTimeout,
 
       [parameter(
