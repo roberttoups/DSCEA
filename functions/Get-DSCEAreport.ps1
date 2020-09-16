@@ -106,6 +106,9 @@ This command returns non-compliant configuration file items detected, grouped by
   # Default Variables
   #----------------------------------------------------------------------------------------------------------------------#
   $ProgramPath = Join-Path -Path 'C:\ProgramData' -ChildPath 'DSCEA'
+  if((Test-Path -Path $ProgramPath) -eq $false) {
+    throw "Unable to locate $ProgramPath"
+  }
   $HtmlTitle = 'DSC Configuration Report'
   #----------------------------------------------------------------------------------------------------------------------#
   # Collect Module Directory Paths (Windows separates PSMModulePath with a semi-colon - Linux/Unix uses colon)
