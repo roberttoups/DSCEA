@@ -10,7 +10,7 @@ Run this function after you have defined the remote systems to scan and have cre
 The file name (full file path) to the MOF file you are looking to use with DSCEA to perform a scan.  If no value is provided, Start-DSCEAscan will look into the current directory for a file named localhost.mof
 
 .PARAMETER ComputerName
-Comma seperated list of computer names that you want to scan
+Comma separated list of computer names that you want to scan
 
 .PARAMETER InputFile
 The file name (full file path) to a text file that contains a list of computers you want to scan
