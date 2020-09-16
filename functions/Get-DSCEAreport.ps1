@@ -93,8 +93,14 @@ This command returns non-compliant configuration file items detected, grouped by
         Select-Object -First 1
     ).FullName,
 
-    [String]$OutPath = '.'
+    [String]
+    $OutPath = (Join-Path -Path $PSScriptRoot -ChildPath '')
   )
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Start the Clock
+  #----------------------------------------------------------------------------------------------------------------------#
+  $RunTime = [System.Diagnostics.Stopwatch]::StartNew()
+
   $env:PSModulePath -split ';' | ForEach-Object {
     if(Test-Path (Join-Path -Path $_ -ChildPath 'DSCEA')) {
       if (!(Test-Path -Path 'C:\ProgramData\DSCEA')) {
@@ -145,3 +151,7 @@ This command returns non-compliant configuration file items detected, grouped by
     Get-ItemProperty (Join-Path -Path $OutPath -ChildPath "ComputerComplianceReport-$ComputerName.html")
   }
 }
+#----------------------------------------------------------------------------------------------------------------------#
+# Stop the Clock
+#----------------------------------------------------------------------------------------------------------------------#
+Write-Host "[i] Run Time: $([System.Math]::Floor($RunTime.Elapsed.TotalHours).ToString('#,#00')):$($RunTime.Elapsed.Minutes):$($RunTime.Elapsed.Seconds.ToString('00'))" -ForegroundColor 'Yellow'
