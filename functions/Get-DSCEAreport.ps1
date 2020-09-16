@@ -85,6 +85,9 @@ This command returns non-compliant configuration file items detected, grouped by
     [Switch]
     $Detailed,
 
+    [parameter(
+      Mandatory = $false
+    )]
     [String]
     $InFilePath = (
       Get-ChildItem -Path '.' -Filter 'results*.xml' |
@@ -165,6 +168,11 @@ This command returns non-compliant configuration file items detected, grouped by
     Get-ChildItem -Path $InFilePath |
       Select-Object -ExpandProperty 'LastWriteTime'
   )
+  $BodyHeader = @(
+    "<img src='$WebLogoPath'/><br>",
+    "<titlesection>$HtmlTitle</titlesection><br>",
+    "<datesection>Report last run on $ReportDate</datesection><p>"
+  )
   #----------------------------------------------------------------------------------------------------------------------#
   # Overall
   #----------------------------------------------------------------------------------------------------------------------#
@@ -177,11 +185,7 @@ This command returns non-compliant configuration file items detected, grouped by
         @{Name = 'Computer'; Expression = { $_.PSComputerName } },
         @{Name = 'Compliant'; Expression = { $_.InDesiredState } }
       ) |
-      ConvertTo-HTML -Head $webstyle -Body (
-        "<img src='$WebLogoPath'/><br>",
-        "<titlesection>$HtmlTitle</titlesection><br>",
-        "<datesection>Report last run on $ReportDate</datesection><p>"
-      ) |
+      ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
       Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
@@ -203,11 +207,7 @@ This command returns non-compliant configuration file items detected, grouped by
               )
             }
           } |
-          ConvertTo-HTML -Head $webstyle -Body (
-            "<img src='$WebLogoPath'/><br>",
-            "<titlesection>$HtmlTitle</titlesection><br>",
-            "<datesection>Report last run on $ReportDate</datesection><p>"
-          ) |
+          ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
           Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
@@ -240,11 +240,7 @@ This command returns non-compliant configuration file items detected, grouped by
                     }
                   }
                 } | Where-Object { $_.InstanceName -ieq $ItemName } |
-                ConvertTo-HTML -Head $webstyle -Body (
-                  "<img src='$WebLogoPath'/><br>",
-                  "<titlesection>$HtmlTitle</titlesection><br>",
-                  "<datesection>Report last run on $ReportDate</datesection><p>"
-                ) |
+                ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
                 Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
@@ -273,11 +269,7 @@ This command returns non-compliant configuration file items detected, grouped by
                   'InDesiredState'
                 )
               }
-            } | ConvertTo-HTML -Head $webstyle -body (
-              "<img src='$WebLogoPath'/><br>",
-              "<titlesection>$HtmlTitle</titlesection><br>",
-              "<datesection>Report last run on $ReportDate</datesection><p>"
-            ) |
+            } | ConvertTo-HTML -Head $webstyle -Body $BodyHeader |
             Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
