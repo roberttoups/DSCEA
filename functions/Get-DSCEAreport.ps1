@@ -165,6 +165,9 @@ This command returns non-compliant configuration file items detected, grouped by
     Get-ChildItem -Path $InFilePath |
       Select-Object -ExpandProperty 'LastWriteTime'
   )
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Overall
+  #----------------------------------------------------------------------------------------------------------------------#
   if($Overall) {
     $results |
       select-object -ExpandProperty Compliance | Where-Object { $_.PSComputerName -ne $null } |
@@ -173,6 +176,9 @@ This command returns non-compliant configuration file items detected, grouped by
       Out-File (Join-Path -Path $OutPath -ChildPath 'OverallComplianceReport.html')
     Get-ItemProperty (Join-Path -Path $OutPath -ChildPath 'OverallComplianceReport.html')
   }
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Detailed
+  #----------------------------------------------------------------------------------------------------------------------#
   if($Detailed) {
     $results | ForEach-Object {
       $_.Compliance | ForEach-Object {
@@ -183,6 +189,9 @@ This command returns non-compliant configuration file items detected, grouped by
       Out-File (Join-Path -Path $OutPath -ChildPath 'DetailedComplianceReport.html')
     Get-ItemProperty (Join-Path -Path $OutPath -ChildPath 'DetailedComplianceReport.html')
   }
+  #----------------------------------------------------------------------------------------------------------------------#
+  # ItemName
+  #----------------------------------------------------------------------------------------------------------------------#
   if($ItemName) {
     $results | ForEach-Object {
       $_.Compliance | ForEach-Object {
@@ -194,6 +203,9 @@ This command returns non-compliant configuration file items detected, grouped by
     Out-File (Join-Path -Path $OutPath -ChildPath "ItemComplianceReport-$ItemName.html")
     Get-ItemProperty (Join-Path -Path $OutPath -ChildPath "ItemComplianceReport-$ItemName.html")
   }
+  #----------------------------------------------------------------------------------------------------------------------#
+  # ComputerName
+  #----------------------------------------------------------------------------------------------------------------------#
   if($ComputerName) {
     $results | where-object { $_.Computer -ieq $ComputerName } | ForEach-Object {
       $_.Compliance | ForEach-Object {
