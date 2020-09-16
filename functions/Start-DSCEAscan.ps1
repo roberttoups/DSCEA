@@ -276,10 +276,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         if($PSBoundParameters.ContainsKey('CimSession')) {
           $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $CimSession -AsJob | Wait-Job -Timeout $JobTimeout
         } else {
-
           $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $ComputerName -AsJob | Wait-Job -Timeout $JobTimeout
         }
-        if (!$DSCJob) {
+        if(!$DSCJob) {
           $JobFailedError = "$ComputerName was unable to complete in the alloted job timeout period of $JobTimeout seconds"
           for ($i = 1; $i -lt 10; $i++) {
             Repair-DSCEngine -ComputerName $ComputerName -ErrorAction 'SilentlyContinue'
