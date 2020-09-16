@@ -258,9 +258,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
     $RunTime = Measure-Command {
       try {
-        if ($PSBoundParameters.ContainsKey('Force')) {
+        if($PSBoundParameters.ContainsKey('Force')) {
           for ($i = 1; $i -lt 10; $i++) {
-            Repair-DSCEngine -ComputerName $ComputerName -ErrorAction SilentlyContinue
+            Repair-DSCEngine -ComputerName $ComputerName -ErrorAction 'SilentlyContinue'
           }
         }
         #----------------------------------------------------------------------------------------------------------------------#
