@@ -201,21 +201,27 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   $ScriptBlock = {
     param (
       [ValidateNotNullOrEmpty()]
-      [String]$computer,
+      [String]
+      $computer,
 
       [ValidateScript( { Test-Path $_ })]
-      [String]$mofFile,
+      [String]
+      $mofFile,
 
       [ValidateNotNullOrEmpty()]
-      [String]$JobTimeout,
+      [String]
+      $JobTimeout,
 
-      [switch]$Force,
+      [switch]
+      $Force,
 
       $ModulesRequired,
 
-      [Microsoft.Management.Infrastructure.CimSession]$CimSession,
+      [Microsoft.Management.Infrastructure.CimSession]
+      $CimSession,
 
-      [String]$functionRoot
+      [String]
+      $functionRoot
     )
 
     Get-ChildItem -Path $functionRoot -Filter '*.ps1' | ForEach-Object {
