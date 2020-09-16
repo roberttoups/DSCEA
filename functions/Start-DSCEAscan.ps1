@@ -318,7 +318,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
   $Jobs = @()
   $Results = @()
-
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Path
+  #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('Path')) {
     $targets = Get-ChildItem -Path $Path | Where-Object { ($_.Name -like '*.mof') -and ($_.Name -notlike '*.meta.mof') }
     $targets | Sort-Object | ForEach-Object {
@@ -341,7 +343,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       }
     }
   }
-
+  #----------------------------------------------------------------------------------------------------------------------#
+  # CimSession
+  #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('CimSession')) {
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
@@ -365,7 +369,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       }
     }
   }
-
+  #----------------------------------------------------------------------------------------------------------------------#
+  # ComputerName
+  #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('ComputerName')) {
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
@@ -404,7 +410,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       }
     }
   }
-
+  #----------------------------------------------------------------------------------------------------------------------#
+  # InputFile
+  #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('InputFile')) {
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
@@ -444,8 +452,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     }
   }
 
-
-  #Wait for Jobs to Complete
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Wait for Jobs to Complete
+  #----------------------------------------------------------------------------------------------------------------------#
   Write-Verbose "Processing Compliance Testing..."
   $OverallTimeout = New-TimeSpan -Seconds $ScanTimeout
   $ElapsedTime = [system.diagnostics.stopwatch]::StartNew()
@@ -470,8 +479,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   ForEach ($ExceptionWarning in $Results.Exception) {
     Write-Warning $ExceptionWarning
   }
-
-  #Save Results
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Save Results
+  #----------------------------------------------------------------------------------------------------------------------#
   Write-Verbose "$([String]::Format("Total Scan Time: {0:d2}:{1:d2}:{2:d2}", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds))"
   $Results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
   Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
