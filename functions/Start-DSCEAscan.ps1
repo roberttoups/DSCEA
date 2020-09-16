@@ -275,6 +275,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           Copy-DSCResource -PSSession $PSSession -ModulestoCopy $ModulesRequired
           Remove-PSSession $PSSession
         }
+        #----------------------------------------------------------------------------------------------------------------------#
+        # Perform DSC MOF Test on Remote System
+        #----------------------------------------------------------------------------------------------------------------------#
         if($PSBoundParameters.ContainsKey('CimSession')) {
           $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $CimSession -AsJob |
             Wait-Job -Timeout $JobTimeout
