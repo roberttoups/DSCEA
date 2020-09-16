@@ -256,7 +256,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       try {
         if ($PSBoundParameters.ContainsKey('Force')) {
           for ($i = 1; $i -lt 10; $i++) {
-            Repair-DSCEngine -ComputerName $computer -ErrorAction SilentlyContinue
+            Repair-DSCEngine -ComputerName $ComputerName -ErrorAction SilentlyContinue
           }
         }
         #Copy resources if required
@@ -264,7 +264,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           if($CimSession) {
             $session = New-PSSession -ComputerName $CimSession.ComputerName
           } else {
-            $session = New-PSSession -ComputerName $Computer
+            $session = New-PSSession -ComputerName $ComputerName
           }
           Copy-DSCResource -PSSession $session -ModulestoCopy $ModulesRequired
           Remove-PSSession $session
@@ -273,12 +273,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $CimSession -AsJob | Wait-Job -Timeout $JobTimeout
         } else {
 
-          $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $computer -AsJob | Wait-Job -Timeout $JobTimeout
+          $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $ComputerName -AsJob | Wait-Job -Timeout $JobTimeout
         }
         if (!$DSCJob) {
-          $JobFailedError = "$computer was unable to complete in the alloted job timeout period of $JobTimeout seconds"
+          $JobFailedError = "$ComputerName was unable to complete in the alloted job timeout period of $JobTimeout seconds"
           for ($i = 1; $i -lt 10; $i++) {
-            Repair-DSCEngine -ComputerName $computer -ErrorAction SilentlyContinue
+            Repair-DSCEngine -ComputerName $ComputerName -ErrorAction SilentlyContinue
           }
           return
         }
