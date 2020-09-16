@@ -540,10 +540,13 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   $Results |
     Export-Clixml -Path $ResultsPath -Force
   Get-ItemProperty -Path $ResultsPath
-
-  #This function will display a divide by zero message if no computers are provided that are running PowerShell 5 or above
+  #----------------------------------------------------------------------------------------------------------------------#
+  # This function will display a divide by zero message if no computers are provided that are running PowerShell 5 or above
+  #----------------------------------------------------------------------------------------------------------------------#
   if($VersionErrorList) {
-    #add in comma separated option for multiple systems
+    #----------------------------------------------------------------------------------------------------------------------#
+    # Add in comma separated option for multiple systems
+    #----------------------------------------------------------------------------------------------------------------------#
     Write-Warning "The DSCEA scan completed but did not scan all systems. Please check '$PSVersionErrorsFile' for details"
     $VersionErrorList | Export-Clixml -Path $PSVersionErrorsFile -Force
   }
