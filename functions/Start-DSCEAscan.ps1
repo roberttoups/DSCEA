@@ -459,7 +459,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       Where-Object { $_.Major -lt 5 } |
       Select-Object -ExpandProperty 'PSComputername'
 
-    $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
+    $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath "PSVersionErrors-$(Get-Date -Format 'yyyyMMddHHmmss').xml"
 
     Write-Verbose -Message "Connectivity testing complete"
     if($VersionErrorList) {
