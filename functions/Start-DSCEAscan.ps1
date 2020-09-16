@@ -358,13 +358,13 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('CimSession')) {
     Write-Verbose -Message 'CimSession ParameterSet'
-    # $MofFile = (Get-Item $MofFile).FullName
+    $MofFilePath = Convert-Path -Path $MofFile
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $CimSession |
       ForEach-Object {
         $JobParameters = @{
           CimSession      = $_
-          MofFile         = $MofFile
+          MofFile         = $MofFilePath
           JobTimeout      = $JobTimeout
           ModulesRequired = $ModulesRequired
           FunctionRoot    = $functionRoot
@@ -388,7 +388,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('ComputerName')) {
     Write-Verbose -Message 'ComputerName ParameterSet'
-    $MofFile = (Get-Item $MofFile).FullName
+    $MofFilePath = Convert-Path -Path $MofFile
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $FirstRunList = $ComputerName
     $ArgumentCollection = @{
@@ -420,7 +420,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       ForEach-Object {
         $JobParameters = @{
           Computer        = $_
-          MofFile         = $MofFile
+          MofFile         = $MofFilePath
           JobTimeout      = $JobTimeout
           ModulesRequired = $ModulesRequired
           FunctionRoot    = $functionRoot
@@ -444,7 +444,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('InputFile')) {
     Write-Verbose -Message 'InputFile ParameterSet'
-    # $MofFile = (Get-Item $MofFile).FullName
+    $MofFilePath = Convert-Path -Path $MofFile
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $FirstRunList = Get-Content -Path $InputFile
     $ArgumentCollection = @{
@@ -476,7 +476,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       ForEach-Object {
         $JobParameters = @{
           Computer        = $_
-          MofFile         = $MofFile
+          MofFile         = $MofFilePath
           JobTimeout      = $JobTimeout
           ModulesRequired = $ModulesRequired
           FunctionRoot    = $functionRoot
