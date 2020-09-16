@@ -169,6 +169,7 @@ This command returns non-compliant configuration file items detected, grouped by
   # Overall
   #----------------------------------------------------------------------------------------------------------------------#
   if($Overall) {
+    $HtmlExportPath = Join-Path -Path $OutPath -ChildPath 'OverallComplianceReport.html'
     $Results |
       Select-Object -ExpandProperty 'Compliance' |
       Where-Object { $null -ne $_.PSComputerName } |
@@ -181,8 +182,8 @@ This command returns non-compliant configuration file items detected, grouped by
         '<titlesection>DSC Configuration Report</titlesection><br>',
         '<datesection>Report last run on", $date, "</datesection><p>'
       ) |
-      Out-File (Join-Path -Path $OutPath -ChildPath 'OverallComplianceReport.html')
-    Get-ItemProperty (Join-Path -Path $OutPath -ChildPath 'OverallComplianceReport.html')
+      Set-Content -Path $HtmlExportPath
+    Get-ItemProperty -Path $HtmlExportPath
   }
   #----------------------------------------------------------------------------------------------------------------------#
   # Detailed
