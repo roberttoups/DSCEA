@@ -316,13 +316,13 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     }
   }
 
-  $jobs = @()
-  $results = @()
+  $Jobs = @()
+  $Results = @()
 
   if($PSBoundParameters.ContainsKey('Path')) {
     $targets = Get-ChildItem -Path $Path | Where-Object { ($_.Name -like '*.mof') -and ($_.Name -notlike '*.meta.mof') }
     $targets | Sort-Object | ForEach-Object {
-      $params = @{
+      $JobParameters = @{
         Computer        = $_.BaseName
         MofFile         = $_.FullName
         JobTimeout      = $JobTimeout
@@ -330,12 +330,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         FunctionRoot    = $functionRoot
       }
       if($PSBoundParameters.ContainsKey('Force')) {
-        $params += @{Force = $true }
+        $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose "Initiating DSCEA scan on $_"
 		    $job.RunSpacePool = $RunspacePool
-      $jobs += [PSCustomObject]@{
+      $Jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
       }
@@ -346,7 +346,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
     $CimSession | ForEach-Object {
-      $params = @{
+      $JobParameters = @{
         CimSession      = $_
         MofFile         = $MofFile
         JobTimeout      = $JobTimeout
@@ -354,12 +354,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         FunctionRoot    = $functionRoot
       }
       if($PSBoundParameters.ContainsKey('Force')) {
-        $params += @{Force = $true }
+        $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose ('Initiating DSCEA scan on {0}' -f $_.ComputerName)
 		    $job.RunSpacePool = $RunspacePool
-      $jobs += [PSCustomObject]@{
+      $Jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
       }
@@ -385,7 +385,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
     }
     $RunList | Sort-Object | ForEach-Object {
-      $params = @{
+      $JobParameters = @{
         Computer        = $_
         MofFile         = $MofFile
         JobTimeout      = $JobTimeout
@@ -393,12 +393,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         FunctionRoot    = $functionRoot
       }
       if($PSBoundParameters.ContainsKey('Force')) {
-        $params += @{Force = $true }
+        $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose "Initiating DSCEA scan on $_"
 		    $job.RunSpacePool = $RunspacePool
-      $jobs += [PSCustomObject]@{
+      $Jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
       }
@@ -424,7 +424,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
     }
     $RunList | Sort-Object | ForEach-Object {
-      $params = @{
+      $JobParameters = @{
         Computer        = $_
         MofFile         = $MofFile
         JobTimeout      = $JobTimeout
@@ -432,12 +432,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         FunctionRoot    = $functionRoot
       }
       if($PSBoundParameters.ContainsKey('Force')) {
-        $params += @{Force = $true }
+        $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose "Initiating DSCEA scan on $_"
 		    $job.RunSpacePool = $RunspacePool
-      $jobs += [PSCustomObject]@{
+      $Jobs += [PSCustomObject]@{
         Pipe   = $job
         Result = $job.BeginInvoke()
       }
@@ -451,29 +451,29 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   $ElapsedTime = [system.diagnostics.stopwatch]::StartNew()
   do {
     Start-Sleep -Milliseconds 500
-    $JobsComplete = ($jobs.result.IsCompleted | Where-Object { $_ -eq $true }).count
+    $JobsComplete = ($Jobs.result.IsCompleted | Where-Object { $_ -eq $true }).count
 
     #percentage complete can be added as the number of jobs completed out of the number of total jobs
-    Write-Progress -activity "Working..." -PercentComplete (($JobsComplete / $jobs.count) * 100) -status "$([String]::Format("Time Elapsed: {0:d2}:{1:d2}:{2:d2}     Jobs Complete: {3} of {4} ", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds, $JobsComplete, $jobs.count))";
+    Write-Progress -activity "Working..." -PercentComplete (($JobsComplete / $Jobs.count) * 100) -status "$([String]::Format("Time Elapsed: {0:d2}:{1:d2}:{2:d2}     Jobs Complete: {3} of {4} ", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds, $JobsComplete, $Jobs.count))";
 
     if($ElapsedTime.elapsed -gt $OverallTimeout) {
       Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($OverallTimeout.TotalSeconds) seconds was exceeded."
       return
     }
-  } while (($jobs.Result.IsCompleted -contains $false) -and ($ElapsedTime.elapsed -lt $OverallTimeout)) #while elapsed time < 1 hour by default
+  } while (($Jobs.Result.IsCompleted -contains $false) -and ($ElapsedTime.elapsed -lt $OverallTimeout)) #while elapsed time < 1 hour by default
 
   #Retrieve Jobs
-  $jobs | ForEach-Object {
-    $results += $_.Pipe.EndInvoke($_.Result)
+  $Jobs | ForEach-Object {
+    $Results += $_.Pipe.EndInvoke($_.Result)
   }
 
-  ForEach ($ExceptionWarning in $results.Exception) {
+  ForEach ($ExceptionWarning in $Results.Exception) {
     Write-Warning $ExceptionWarning
   }
 
   #Save Results
   Write-Verbose "$([String]::Format("Total Scan Time: {0:d2}:{1:d2}:{2:d2}", $ElapsedTime.Elapsed.hours, $ElapsedTime.Elapsed.minutes, $ElapsedTime.Elapsed.seconds))"
-  $results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
+  $Results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
   Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
 
   #This function will display a divide by zero message if no computers are provided that are running PowerShell 5 or above
@@ -483,7 +483,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     $VersionErrorList | Export-Clixml -Path $PSVersionErrorsFile -Force
   }
 
-  if($results.Exception) {
+  if($Results.Exception) {
     Write-Warning "The DSCEA scan completed but job errors were detected.  Please check '$ResultsFile' for details"
   }
 
