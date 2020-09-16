@@ -93,6 +93,9 @@ This command returns non-compliant configuration file items detected, grouped by
         Select-Object -ExpandProperty 'FullName'
     ),
 
+    [parameter(
+      Mandatory = $false
+    )]
     [String]
     $OutPath = (Join-Path -Path $PSScriptRoot -ChildPath '')
   )
@@ -152,11 +155,16 @@ This command returns non-compliant configuration file items detected, grouped by
     }
   }
   #----------------------------------------------------------------------------------------------------------------------#
-  # Process the Results File
+  # Load the Results File (better safe than confused)
   #----------------------------------------------------------------------------------------------------------------------#
-
-  $results = Import-Clixml $InFilePath
-  $date = (Get-ChildItem $InFilePath).LastWriteTime
+  if((Test-Path -Path $InFilePath) -eq $false) {
+    throw "Failed to locate $InFilePath"
+  }
+  $Results = Import-Clixml -Path $InFilePath
+  $ReportDate = (
+    Get-ChildItem -Path $InFilePath |
+      Select-Object -ExpandProperty 'LastWriteTime'
+  )
   if($Overall) {
     $results |
       select-object -ExpandProperty Compliance | Where-Object { $_.PSComputerName -ne $null } |
