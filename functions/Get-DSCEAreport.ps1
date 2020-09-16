@@ -176,7 +176,11 @@ This command returns non-compliant configuration file items detected, grouped by
         @{Name = 'Computer'; Expression = { $_.PSComputerName } },
         @{Name = 'Compliant'; Expression = { $_.InDesiredState } }
       ) |
-      ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>DSC Configuration Report</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
+      ConvertTo-HTML -Head $webstyle -Body (
+        "<img src='$WebLogoPath'/><br>",
+        '<titlesection>DSC Configuration Report</titlesection><br>',
+        '<datesection>Report last run on", $date, "</datesection><p>'
+      ) |
       Out-File (Join-Path -Path $OutPath -ChildPath 'OverallComplianceReport.html')
     Get-ItemProperty (Join-Path -Path $OutPath -ChildPath 'OverallComplianceReport.html')
   }
