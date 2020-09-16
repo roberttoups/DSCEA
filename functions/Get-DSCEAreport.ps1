@@ -149,7 +149,6 @@ This command returns non-compliant configuration file items detected, grouped by
           throw "($ErrorMessage): $SpecificReason Exiting."
         }
         if(Test-Path -Path $DestinationPath) {
-          $LogoFound = $true
           break
         }
       }
@@ -222,48 +221,64 @@ This command returns non-compliant configuration file items detected, grouped by
         $_.Compliance |
           ForEach-Object {
             $_.ResourcesInDesiredState |
-              ForEach-Object { $_
-                | Select-Object -Property (
-                  @{Name = 'Computer'; Expression = { $_.PSComputerName } },
-                  'ResourceName',
-                  'InstanceName',
-                  'InDesiredState'
-                )
-              }
-              $_.ResourcesNotInDesiredState |
-                ForEach-Object { $_ |
-                    Select-Object -Property (
-                      @{Name = 'Computer'; Expression = { $_.PSComputerName } },
-                      'ResourceName',
-                      'InstanceName',
-                      'InDesiredState'
-                    )
-                  }
+              ForEach-Object { $_ |
+                  Select-Object -Property (
+                    @{Name = 'Computer'; Expression = { $_.PSComputerName } },
+                    'ResourceName',
+                    'InstanceName',
+                    'InDesiredState'
+                  )
                 }
-              } | Where-Object { $_.InstanceName -ieq $ItemName } |
-              ConvertTo-HTML -Head $webstyle -Body (
-                "<img src='$WebLogoPath'/><br>",
-                "<titlesection>$HtmlTitle</titlesection><br>",
-                "<datesection>Report last run on $ReportDate</datesection><p>"
-              ) |
-              Set-Content -Path $HtmlExportPath -Encoding 'unicode'
+                $_.ResourcesNotInDesiredState |
+                  ForEach-Object { $_ |
+                      Select-Object -Property (
+                        @{Name = 'Computer'; Expression = { $_.PSComputerName } },
+                        'ResourceName',
+                        'InstanceName',
+                        'InDesiredState'
+                      )
+                    }
+                  }
+                } | Where-Object { $_.InstanceName -ieq $ItemName } |
+                ConvertTo-HTML -Head $webstyle -Body (
+                  "<img src='$WebLogoPath'/><br>",
+                  "<titlesection>$HtmlTitle</titlesection><br>",
+                  "<datesection>Report last run on $ReportDate</datesection><p>"
+                ) |
+                Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
   #----------------------------------------------------------------------------------------------------------------------#
   # ComputerName
   #----------------------------------------------------------------------------------------------------------------------#
   if($ComputerName) {
-    $Results | where-object { $_.Computer -ieq $ComputerName } | ForEach-Object {
-      $_.Compliance | ForEach-Object {
-        $_.ResourcesNotInDesiredState | Select-Object @{Name = 'Computer'; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
-        $_.ResourcesInDesiredState | Select-Object @{Name = 'Computer'; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
-      }
-    } | ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>$HtmlTitle</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
-    Out-File (Join-Path -Path $OutPath -ChildPath "ComputerComplianceReport-$ComputerName.html")
-    Get-ItemProperty (Join-Path -Path $OutPath -ChildPath "ComputerComplianceReport-$ComputerName.html")
+    $HtmlExportPath = Join-Path -Path $OutPath -ChildPath "ComputerComplianceReport-$ComputerName.html"
+    $Results |
+      Where-Object { $_.Computer -ieq $ComputerName } |
+      ForEach-Object {
+        $_.Compliance |
+          ForEach-Object {
+            $_.ResourcesNotInDesiredState |
+              Select-Object -Property (
+                @{Name = 'Computer'; Expression = { $_.PSComputerName } },
+                'ResourceName',
+                'InstanceName',
+                'InDesiredState'
+              )
+              $_.ResourcesInDesiredState |
+                Select-Object -Property (
+                  @{Name = 'Computer'; Expression = { $_.PSComputerName } },
+                  'ResourceName',
+                  'InstanceName',
+                  'InDesiredState'
+                )
+              }
+            } | ConvertTo-HTML -Head $webstyle -body (
+              "<img src='$WebLogoPath'/><br>",
+              "<titlesection>$HtmlTitle</titlesection><br>",
+              "<datesection>Report last run on $ReportDate</datesection><p>"
+            ) |
+            Set-Content -Path $HtmlExportPath -Encoding 'unicode'
+    Get-ItemProperty -Path $HtmlExportPath
   }
 }
-#----------------------------------------------------------------------------------------------------------------------#
-# Stop the Clock
-#----------------------------------------------------------------------------------------------------------------------#
-Write-Host "[i] Run Time: $([System.Math]::Floor($RunTime.Elapsed.TotalHours).ToString('#,#00')):$($RunTime.Elapsed.Minutes):$($RunTime.Elapsed.Seconds.ToString('00'))" -ForegroundColor 'Yellow'
