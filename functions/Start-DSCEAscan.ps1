@@ -398,8 +398,8 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       Wait-Job -Timeout $JobTimeout
     $PSJobResults = Receive-Job $PSResults
 
-    $RunList = ($PSJobResults | where-object -Property Major -ge 5).PSComputername
-    $VersionErrorList = ($PSJobResults | where-object -Property Major -lt 5).PSComputername
+    $RunList = ($PSJobResults | Where-Object -Property Major -ge 5).PSComputername
+    $VersionErrorList = ($PSJobResults | Where-Object -Property Major -lt 5).PSComputername
 
     $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
@@ -439,8 +439,8 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     } | Wait-Job -Timeout $JobTimeout
     $PSJobResults = Receive-Job $PSResults
 
-    $RunList = ($PSJobResults | where-object -Property Major -ge 5).PSComputername
-    $VersionErrorList = ($PSJobResults | where-object -Property Major -lt 5).PSComputername
+    $RunList = ($PSJobResults | Where-Object -Property Major -ge 5).PSComputername
+    $VersionErrorList = ($PSJobResults | Where-Object -Property Major -lt 5).PSComputername
 
     $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
