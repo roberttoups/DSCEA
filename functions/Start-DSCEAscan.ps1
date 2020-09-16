@@ -332,12 +332,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if($PSBoundParameters.ContainsKey('Force')) {
         $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
+      $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose "Initiating DSCEA scan on $_"
-		    $job.RunSpacePool = $RunspacePool
+		    $ScanJob.RunSpacePool = $RunspacePool
       $Jobs += [PSCustomObject]@{
-        Pipe   = $job
-        Result = $job.BeginInvoke()
+        Pipe   = $ScanJob
+        Result = $ScanJob.BeginInvoke()
       }
     }
   }
@@ -356,12 +356,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if($PSBoundParameters.ContainsKey('Force')) {
         $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
+      $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose ('Initiating DSCEA scan on {0}' -f $_.ComputerName)
-		    $job.RunSpacePool = $RunspacePool
+		    $ScanJob.RunSpacePool = $RunspacePool
       $Jobs += [PSCustomObject]@{
-        Pipe   = $job
-        Result = $job.BeginInvoke()
+        Pipe   = $ScanJob
+        Result = $ScanJob.BeginInvoke()
       }
     }
   }
@@ -395,12 +395,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if($PSBoundParameters.ContainsKey('Force')) {
         $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
+      $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose "Initiating DSCEA scan on $_"
-		    $job.RunSpacePool = $RunspacePool
+		    $ScanJob.RunSpacePool = $RunspacePool
       $Jobs += [PSCustomObject]@{
-        Pipe   = $job
-        Result = $job.BeginInvoke()
+        Pipe   = $ScanJob
+        Result = $ScanJob.BeginInvoke()
       }
     }
   }
@@ -434,12 +434,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if($PSBoundParameters.ContainsKey('Force')) {
         $JobParameters += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
+      $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
       Write-Verbose "Initiating DSCEA scan on $_"
-		    $job.RunSpacePool = $RunspacePool
+		    $ScanJob.RunSpacePool = $RunspacePool
       $Jobs += [PSCustomObject]@{
-        Pipe   = $job
-        Result = $job.BeginInvoke()
+        Pipe   = $ScanJob
+        Result = $ScanJob.BeginInvoke()
       }
     }
   }
