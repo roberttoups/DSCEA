@@ -86,7 +86,7 @@ This command returns non-compliant configuration file items detected, grouped by
     $Detailed,
 
     [String]
-    $InFile = (
+    $InFilePath = (
       Get-ChildItem -Path $PSScriptRoot -Filter 'results*.xml' |
         Sort-Object -Property 'LastWriteTime' -Descending |
         Select-Object -First 1 |
@@ -155,8 +155,8 @@ This command returns non-compliant configuration file items detected, grouped by
   # Process the Results File
   #----------------------------------------------------------------------------------------------------------------------#
 
-  $results = Import-Clixml $InFile
-  $date = (Get-ChildItem $InFile).LastWriteTime
+  $results = Import-Clixml $InFilePath
+  $date = (Get-ChildItem $InFilePath).LastWriteTime
   if($Overall) {
     $results |
       select-object -ExpandProperty Compliance | Where-Object { $_.PSComputerName -ne $null } |
