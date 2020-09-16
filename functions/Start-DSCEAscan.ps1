@@ -256,7 +256,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           Out-Null
       }
 
-    $runTime = Measure-Command {
+    $RunTime = Measure-Command {
       try {
         if ($PSBoundParameters.ContainsKey('Force')) {
           for ($i = 1; $i -lt 10; $i++) {
@@ -296,14 +296,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
     if($PSBoundParameters.ContainsKey('CimSession')) {
       return [PSCustomObject]@{
-        RunTime    = $runTime
+        RunTime    = $RunTime
         Compliance = $Compliance
         Exception  = $JobFailedError
         Computer   = $CimSession.ComputerName
       }
     } else {
       return [PSCustomObject]@{
-        RunTime    = $runTime
+        RunTime    = $RunTime
         Compliance = $Compliance
         Exception  = $JobFailedError
         Computer   = $computer
