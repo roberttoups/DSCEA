@@ -192,9 +192,10 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     [String]
     $Path
   )
-
-  #Begin DSCEA Engine
-  Write-Verbose "DSCEA Scan has started"
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Begin DSCEA Engine
+  #----------------------------------------------------------------------------------------------------------------------#
+  Write-Verbose -Message 'DSCEA Scan has started'
 
   $runspacePool = [RunspaceFactory]::CreateRunspacePool(1, 10).Open() #Min Runspaces, Max Runspaces
   $scriptBlock = {
