@@ -229,7 +229,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           }
         }
         #Copy resources if required
-        if ($ModulesRequired -ne $null) {
+        if ($null -eq $ModulesRequired) {
           if($CimSession) {
             $session = New-PSSession -ComputerName $CimSession.ComputerName
           } else {
