@@ -438,12 +438,17 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   # InputFile
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('InputFile')) {
-    $MofFile = (Get-Item $MofFile).FullName
+    # $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
-    $FirstRunList = Get-Content $InputFile
-    $PSResults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
-      $PSVersionTable.PSVersion
-    } | Wait-Job -Timeout $JobTimeout
+    $FirstRunList = Get-Content -Path $InputFile
+    $ArgumentCollection = @{
+      ComputerName = $FirstRunList
+      ErrorAction  = 'SilentlyContinue'
+      AsJob        = $true
+      ScriptBlock  = { $PSVersionTable.PSVersion }
+    }
+    $PSResults = Invoke-Command @ArgumentCollection |
+      Wait-Job -Timeout $JobTimeout
     $PSJobResults = Receive-Job $PSResults
 
     $RunList = ($PSJobResults | Where-Object -Property Major -ge 5).PSComputername
