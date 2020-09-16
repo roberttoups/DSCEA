@@ -514,7 +514,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     }
     Write-Progress @ArgumentCollection
 
-    if($ElapsedTime.elapsed -gt $OverallTimeout) {
+    if($ElapsedTime.Elapsed -gt $OverallTimeout) {
       Write-Warning "The DSCEA scan was unable to complete because the timeout value of $($OverallTimeout.TotalSeconds) seconds was exceeded."
       return
     }
