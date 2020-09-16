@@ -323,6 +323,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   # Path [Find MOF files that match ComputerNames and skip .meta.mof files]
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('Path')) {
+    Write-Verbose -Message 'Path ParameterSet'
     $TargetPathCollection = Get-ChildItem -Path $Path |
       Where-Object {
         ($_.Name -like '*.mof') -and
@@ -356,6 +357,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   # CimSession
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('CimSession')) {
+    Write-Verbose -Message 'CimSession ParameterSet'
     # $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $CimSession |
@@ -385,7 +387,8 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   # ComputerName
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('ComputerName')) {
-    # $MofFile = (Get-Item $MofFile).FullName
+    Write-Verbose -Message 'ComputerName ParameterSet'
+    $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $FirstRunList = $ComputerName
     $ArgumentCollection = @{
@@ -440,6 +443,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   # InputFile
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('InputFile')) {
+    Write-Verbose -Message 'InputFile ParameterSet'
     # $MofFile = (Get-Item $MofFile).FullName
     $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $FirstRunList = Get-Content -Path $InputFile
