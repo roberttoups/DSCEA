@@ -182,21 +182,34 @@ This command returns non-compliant configuration file items detected, grouped by
         '<titlesection>DSC Configuration Report</titlesection><br>',
         '<datesection>Report last run on", $date, "</datesection><p>'
       ) |
-      Set-Content -Path $HtmlExportPath
+      Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
   }
   #----------------------------------------------------------------------------------------------------------------------#
   # Detailed
   #----------------------------------------------------------------------------------------------------------------------#
   if($Detailed) {
-    $Results | ForEach-Object {
-      $_.Compliance | ForEach-Object {
-        $_.ResourcesNotInDesiredState |
-          Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
-        }
-      } | ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>DSC Configuration Report</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
-      Out-File (Join-Path -Path $OutPath -ChildPath 'DetailedComplianceReport.html')
-    Get-ItemProperty (Join-Path -Path $OutPath -ChildPath 'DetailedComplianceReport.html')
+    $HtmlExportPath = Join-Path -Path $OutPath -ChildPath 'DetailedComplianceReport.html'
+    $Results |
+      ForEach-Object {
+        $_.Compliance |
+          ForEach-Object {
+            $_.ResourcesNotInDesiredState |
+              Select-Object -Property (
+                @{Name = "Computer"; Expression = { $_.PSComputerName } },
+                'ResourceName',
+                'InstanceName',
+                'InDesiredState'
+              )
+            }
+          } |
+          ConvertTo-HTML -Head $webstyle -Body (
+            "<img src='C:\ProgramData\DSCEA\logo.png'/><br>",
+            "<titlesection>DSC Configuration Report</titlesection><br>",
+            "<datesection>Report last run on", $date, "</datesection><p>"
+          ) |
+          Set-Content -Path $HtmlExportPath -Encoding 'unicode'
+    Get-ItemProperty -Path $HtmlExportPath
   }
   #----------------------------------------------------------------------------------------------------------------------#
   # ItemName
