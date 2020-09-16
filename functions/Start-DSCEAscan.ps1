@@ -263,15 +263,17 @@ This command executes a DSCEA scan against the systems supplied as machine speci
             Repair-DSCEngine -ComputerName $ComputerName -ErrorAction SilentlyContinue
           }
         }
-        #Copy resources if required
+        #----------------------------------------------------------------------------------------------------------------------#
+        # Copy resources if required
+        #----------------------------------------------------------------------------------------------------------------------#
         if ($null -eq $ModulesRequired) {
           if($CimSession) {
-            $session = New-PSSession -ComputerName $CimSession.ComputerName
+            $PSSession = New-PSSession -ComputerName $CimSession.ComputerName
           } else {
-            $session = New-PSSession -ComputerName $ComputerName
+            $PSSession = New-PSSession -ComputerName $ComputerName
           }
-          Copy-DSCResource -PSSession $session -ModulestoCopy $ModulesRequired
-          Remove-PSSession $session
+          Copy-DSCResource -PSSession $PSSession -ModulestoCopy $ModulesRequired
+          Remove-PSSession $PSSession
         }
         if($PSBoundParameters.ContainsKey('CimSession')) {
           $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $CimSession -AsJob |
