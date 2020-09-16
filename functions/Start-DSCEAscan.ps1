@@ -385,8 +385,8 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   # ComputerName
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('ComputerName')) {
-    $MofFile = (Get-Item $MofFile).FullName
-    $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
+    # $MofFile = (Get-Item $MofFile).FullName
+    $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $FirstRunList = $ComputerName
     $PSResults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
       $PSVersionTable.PSVersion
@@ -427,7 +427,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('InputFile')) {
     $MofFile = (Get-Item $MofFile).FullName
-    $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
+    $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
     $FirstRunList = Get-Content $InputFile
     $PSResults = Invoke-Command -ComputerName $FirstRunList -ErrorAction SilentlyContinue -AsJob -ScriptBlock {
       $PSVersionTable.PSVersion
