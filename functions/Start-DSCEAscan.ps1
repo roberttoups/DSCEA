@@ -410,7 +410,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
     Write-Verbose -Message "Connectivity testing complete"
     if($VersionErrorList) {
-      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
+      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5. Please check '$VersionErrorList' for details"
     }
     $RunList |
       Sort-Object |
@@ -463,7 +463,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
 
     Write-Verbose -Message "Connectivity testing complete"
     if($VersionErrorList) {
-      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5.  Please check '$VersionErrorList' for details"
+      Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5. Please check '$VersionErrorList' for details"
     }
     $RunList | Sort-Object | ForEach-Object {
       $JobParameters = @{
