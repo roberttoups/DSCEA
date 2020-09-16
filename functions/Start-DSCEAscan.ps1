@@ -368,7 +368,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           FunctionRoot    = $functionRoot
         }
         if($PSBoundParameters.ContainsKey('Force')) {
-          $JobParameters += @{Force = $true }
+          $JobParameters += @{
+            Force = $true
+          }
         }
         $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
         Write-Verbose -Message "Initiating DSCEA scan on $($_.ComputerName)"
