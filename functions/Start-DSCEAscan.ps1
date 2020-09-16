@@ -198,7 +198,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   Write-Verbose -Message 'DSCEA Scan has started'
 
   $RunspacePool = [RunspaceFactory]::CreateRunspacePool(1, 10).Open() #Min Runspaces, Max Runspaces
-  $scriptBlock = {
+  $ScriptBlock = {
     param (
       [ValidateNotNullOrEmpty()]
       [String]$computer,
@@ -292,7 +292,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if ($PSBoundParameters.ContainsKey('Force')) {
         $params += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
       Write-Verbose "Initiating DSCEA scan on $_"
 		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
@@ -316,7 +316,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if($PSBoundParameters.ContainsKey('Force')) {
         $params += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
       Write-Verbose ('Initiating DSCEA scan on {0}' -f $_.ComputerName)
 		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
@@ -355,7 +355,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if ($PSBoundParameters.ContainsKey('Force')) {
         $params += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
       Write-Verbose "Initiating DSCEA scan on $_"
 		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
@@ -394,7 +394,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       if ($PSBoundParameters.ContainsKey('Force')) {
         $params += @{Force = $true }
       }
-      $job = [Powershell]::Create().AddScript($scriptBlock).AddParameters($params)
+      $job = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($params)
       Write-Verbose "Initiating DSCEA scan on $_"
 		    $job.RunSpacePool = $RunspacePool
       $jobs += [PSCustomObject]@{
