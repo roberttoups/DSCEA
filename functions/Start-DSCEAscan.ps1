@@ -534,10 +534,12 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   # Save Results
   #----------------------------------------------------------------------------------------------------------------------#
+  $ResultsPath = Join-Path  -Path $OutputPath -ChildPath $ResultsFile
   $TotalScanTime = "$($ElapsedTime.Elapsed.ToString().Split('.')[0])"
   Write-Verbose -Message "Total Scan Time: $TotalScanTime"
-  $Results | Export-Clixml -Path (Join-Path  -Path $OutputPath -Child $ResultsFile) -Force
-  Get-ItemProperty (Join-Path  -Path $OutputPath -Child $ResultsFile)
+  $Results |
+    Export-Clixml -Path $ResultsPath -Force
+  Get-ItemProperty -Path $ResultsPath
 
   #This function will display a divide by zero message if no computers are provided that are running PowerShell 5 or above
   if($VersionErrorList) {
