@@ -145,14 +145,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       Mandatory = $false
     )]
     [ValidateNotNullOrEmpty()]
-    [String] #Int32?
+    [Int32]
     $JobTimeout = 600,
 
     [parameter(
       Mandatory = $false
     )]
     [ValidateNotNullOrEmpty()]
-    [String] #Int32?
+    [Int32]
     $ScanTimeout = 3600,
 
     [parameter(
