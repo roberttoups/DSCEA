@@ -451,8 +451,13 @@ This command executes a DSCEA scan against the systems supplied as machine speci
       Wait-Job -Timeout $JobTimeout
     $PSJobResults = Receive-Job $PSResults
 
-    $RunList = ($PSJobResults | Where-Object -Property Major -ge 5).PSComputername
-    $VersionErrorList = ($PSJobResults | Where-Object -Property Major -lt 5).PSComputername
+    $RunList = $PSJobResults |
+      Where-Object { $_.Major -ge 5 } |
+      Select-Object -ExpandProperty 'PSComputername'
+
+    $VersionErrorList = $PSJobResults |
+      Where-Object { $_.Major -lt 5 } |
+      Select-Object -ExpandProperty 'PSComputername'
 
     $PSVersionErrorsFile = Join-Path -Path $LogsPath -ChildPath ('PSVersionErrors.{0}.xml' -f (Get-Date -Format 'yyyyMMdd-HHmm-ss'))
 
