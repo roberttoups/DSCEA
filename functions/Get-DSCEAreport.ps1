@@ -88,10 +88,10 @@ This command returns non-compliant configuration file items detected, grouped by
 
     [String]
     $InFile = (
-      Get-ChildItem -Path '.' -Filter 'results*.xml' |
-      Sort-Object -Property LastWriteTime -Descending |
-      Select-Object -First 1
-      ).FullName,
+      Get-ChildItem -Path $PSScriptRoot -Filter 'results*.xml' |
+        Sort-Object -Property LastWriteTime -Descending |
+        Select-Object -First 1
+    ).FullName,
 
     [String]$OutPath = '.'
   )
