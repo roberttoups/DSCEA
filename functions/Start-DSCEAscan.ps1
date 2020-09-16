@@ -423,7 +423,9 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           FunctionRoot    = $functionRoot
         }
         if($PSBoundParameters.ContainsKey('Force')) {
-          $JobParameters += @{Force = $true }
+          $JobParameters += @{
+            Force = $true
+          }
         }
         $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
         Write-Verbose -Message "Initiating DSCEA scan on $_"
@@ -465,25 +467,29 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     if($VersionErrorList) {
       Write-Warning "The following systems cannot be scanned as they are not running PowerShell 5. Please check '$VersionErrorList' for details"
     }
-    $RunList | Sort-Object | ForEach-Object {
-      $JobParameters = @{
-        Computer        = $_
-        MofFile         = $MofFile
-        JobTimeout      = $JobTimeout
-        ModulesRequired = $ModulesRequired
-        FunctionRoot    = $functionRoot
+    $RunList |
+      Sort-Object |
+      ForEach-Object {
+        $JobParameters = @{
+          Computer        = $_
+          MofFile         = $MofFile
+          JobTimeout      = $JobTimeout
+          ModulesRequired = $ModulesRequired
+          FunctionRoot    = $functionRoot
+        }
+        if($PSBoundParameters.ContainsKey('Force')) {
+          $JobParameters += @{
+            Force = $true
+          }
+        }
+        $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
+        Write-Verbose -Message "Initiating DSCEA scan on $_"
+        $ScanJob.RunSpacePool = $RunspacePool
+        $Jobs += [PSCustomObject]@{
+          Pipe   = $ScanJob
+          Result = $ScanJob.BeginInvoke()
+        }
       }
-      if($PSBoundParameters.ContainsKey('Force')) {
-        $JobParameters += @{Force = $true }
-      }
-      $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
-      Write-Verbose -Message "Initiating DSCEA scan on $_"
-		    $ScanJob.RunSpacePool = $RunspacePool
-      $Jobs += [PSCustomObject]@{
-        Pipe   = $ScanJob
-        Result = $ScanJob.BeginInvoke()
-      }
-    }
   }
 
   #----------------------------------------------------------------------------------------------------------------------#
