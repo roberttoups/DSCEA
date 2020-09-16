@@ -278,7 +278,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
         #----------------------------------------------------------------------------------------------------------------------#
         # Perform DSC MOF Test on Remote System
         #----------------------------------------------------------------------------------------------------------------------#
-        $DCJob = $null
+        $DSCJob = $null
         if($PSBoundParameters.ContainsKey('CimSession')) {
           $DSCJob = Test-DSCConfiguration -ReferenceConfiguration $mofFile -CimSession $CimSession -AsJob |
             Wait-Job -Timeout $JobTimeout
@@ -320,55 +320,64 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   $Jobs = @()
   $Results = @()
   #----------------------------------------------------------------------------------------------------------------------#
-  # Path
+  # Path [Find MOF files that match ComputerNames and skip .meta.mof files]
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('Path')) {
-    $targets = Get-ChildItem -Path $Path | Where-Object { ($_.Name -like '*.mof') -and ($_.Name -notlike '*.meta.mof') }
-    $targets | Sort-Object | ForEach-Object {
-      $JobParameters = @{
-        Computer        = $_.BaseName
-        MofFile         = $_.FullName
-        JobTimeout      = $JobTimeout
-        ModulesRequired = Get-MOFRequiredModules -mofFile $_.FullName
-        FunctionRoot    = $functionRoot
+    $TargetPathCollection = Get-ChildItem -Path $Path |
+      Where-Object {
+        ($_.Name -like '*.mof') -and
+        ($_.Name -notlike '*.meta.mof')
       }
-      if($PSBoundParameters.ContainsKey('Force')) {
-        $JobParameters += @{Force = $true }
+    $TargetPathCollection |
+      Sort-Object |
+      ForEach-Object {
+        $JobParameters = @{
+          Computer        = $_.BaseName
+          MofFile         = $_.FullName
+          JobTimeout      = $JobTimeout
+          ModulesRequired = Get-MOFRequiredModules -MofFile $_.FullName
+          FunctionRoot    = $functionRoot
+        }
+        if($PSBoundParameters.ContainsKey('Force')) {
+          $JobParameters += @{
+            Force = $true
+          }
+        }
+        $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
+        Write-Verbose -Message "Initiating DSCEA scan on $_"
+        $ScanJob.RunSpacePool = $RunspacePool
+        $Jobs += [PSCustomObject]@{
+          Pipe   = $ScanJob
+          Result = $ScanJob.BeginInvoke()
+        }
       }
-      $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
-      Write-Verbose "Initiating DSCEA scan on $_"
-		    $ScanJob.RunSpacePool = $RunspacePool
-      $Jobs += [PSCustomObject]@{
-        Pipe   = $ScanJob
-        Result = $ScanJob.BeginInvoke()
-      }
-    }
   }
   #----------------------------------------------------------------------------------------------------------------------#
   # CimSession
   #----------------------------------------------------------------------------------------------------------------------#
   if($PSBoundParameters.ContainsKey('CimSession')) {
-    $MofFile = (Get-Item $MofFile).FullName
-    $ModulesRequired = Get-MOFRequiredModules -mofFile $MofFile
-    $CimSession | ForEach-Object {
-      $JobParameters = @{
-        CimSession      = $_
-        MofFile         = $MofFile
-        JobTimeout      = $JobTimeout
-        ModulesRequired = $ModulesRequired
-        FunctionRoot    = $functionRoot
+    # $MofFile = (Get-Item $MofFile).FullName
+    $ModulesRequired = Get-MOFRequiredModules -MofFile $MofFile
+    $CimSession |
+      ForEach-Object {
+        $JobParameters = @{
+          CimSession      = $_
+          MofFile         = $MofFile
+          JobTimeout      = $JobTimeout
+          ModulesRequired = $ModulesRequired
+          FunctionRoot    = $functionRoot
+        }
+        if($PSBoundParameters.ContainsKey('Force')) {
+          $JobParameters += @{Force = $true }
+        }
+        $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
+        Write-Verbose -Message "Initiating DSCEA scan on $($_.ComputerName)"
+        $ScanJob.RunSpacePool = $RunspacePool
+        $Jobs += [PSCustomObject]@{
+          Pipe   = $ScanJob
+          Result = $ScanJob.BeginInvoke()
+        }
       }
-      if($PSBoundParameters.ContainsKey('Force')) {
-        $JobParameters += @{Force = $true }
-      }
-      $ScanJob = [Powershell]::Create().AddScript($ScriptBlock).AddParameters($JobParameters)
-      Write-Verbose ('Initiating DSCEA scan on {0}' -f $_.ComputerName)
-		    $ScanJob.RunSpacePool = $RunspacePool
-      $Jobs += [PSCustomObject]@{
-        Pipe   = $ScanJob
-        Result = $ScanJob.BeginInvoke()
-      }
-    }
   }
   #----------------------------------------------------------------------------------------------------------------------#
   # ComputerName
