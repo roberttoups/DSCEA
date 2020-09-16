@@ -87,7 +87,7 @@ This command returns non-compliant configuration file items detected, grouped by
 
     [String]
     $InFilePath = (
-      Get-ChildItem -Path $PSScriptRoot -Filter 'results*.xml' |
+      Get-ChildItem -Path '.' -Filter 'results*.xml' |
         Sort-Object -Property 'LastWriteTime' -Descending |
         Select-Object -First 1 |
         Select-Object -ExpandProperty 'FullName'
@@ -97,7 +97,7 @@ This command returns non-compliant configuration file items detected, grouped by
       Mandatory = $false
     )]
     [String]
-    $OutPath = (Join-Path -Path $PSScriptRoot -ChildPath '')
+    $OutPath = (Join-Path -Path '.' -ChildPath '')
   )
   #----------------------------------------------------------------------------------------------------------------------#
   # Default Variables
