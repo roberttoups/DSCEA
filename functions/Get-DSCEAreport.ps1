@@ -97,10 +97,6 @@ This command returns non-compliant configuration file items detected, grouped by
     $OutPath = (Join-Path -Path $PSScriptRoot -ChildPath '')
   )
   #----------------------------------------------------------------------------------------------------------------------#
-  # Start the Clock
-  #----------------------------------------------------------------------------------------------------------------------#
-  $RunTime = [System.Diagnostics.Stopwatch]::StartNew()
-  #----------------------------------------------------------------------------------------------------------------------#
   # Default Variables
   #----------------------------------------------------------------------------------------------------------------------#
   $ProgramPath = Join-Path -Path 'C:\ProgramData' -ChildPath 'DSCEA'
@@ -109,7 +105,9 @@ This command returns non-compliant configuration file items detected, grouped by
   #----------------------------------------------------------------------------------------------------------------------#
   $FileSystemSeparator = ';'
   $PSModulePathList = $env:PSModulePath.Split($FileSystemSeparator)
-  $PSModulePathList
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Test for the existance of the Web logo and copy it if needed
+  #----------------------------------------------------------------------------------------------------------------------#
   $WebLogoPath = Join-Path -Path $ProgramPath -ChildPath 'logo.png'
   if((Test-Path -Path $WebLogoPath) -eq $false) {
     foreach($PSModulePath in $PSModulePathList) {
@@ -153,6 +151,10 @@ This command returns non-compliant configuration file items detected, grouped by
       }
     }
   }
+  #----------------------------------------------------------------------------------------------------------------------#
+  # Process the Results File
+  #----------------------------------------------------------------------------------------------------------------------#
+
   $results = Import-Clixml $InFile
   $date = (Get-ChildItem $InFile).LastWriteTime
   if($Overall) {
