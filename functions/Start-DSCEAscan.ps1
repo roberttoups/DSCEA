@@ -534,7 +534,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
   #----------------------------------------------------------------------------------------------------------------------#
   # Save Results
   #----------------------------------------------------------------------------------------------------------------------#
-  $ResultsPath = Join-Path  -Path $OutputPath -ChildPath $ResultsFile
+  $ResultsPath = Join-Path -Path $OutputPath -ChildPath $ResultsFile
   $TotalScanTime = "$($ElapsedTime.Elapsed.ToString().Split('.')[0])"
   Write-Verbose -Message "Total Scan Time: $TotalScanTime"
   $Results |
@@ -548,11 +548,10 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     # Add in comma separated option for multiple systems
     #----------------------------------------------------------------------------------------------------------------------#
     Write-Warning "The DSCEA scan completed but did not scan all systems. Please check '$PSVersionErrorsFile' for details"
-    $VersionErrorList | Export-Clixml -Path $PSVersionErrorsFile -Force
+    $VersionErrorList |
+      Export-Clixml -Path $PSVersionErrorsFile -Force
   }
-
   if($Results.Exception) {
     Write-Warning "The DSCEA scan completed but job errors were detected. Please check '$ResultsFile' for details"
   }
-
 }
