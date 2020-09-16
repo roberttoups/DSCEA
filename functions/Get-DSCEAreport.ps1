@@ -179,8 +179,8 @@ This command returns non-compliant configuration file items detected, grouped by
       ) |
       ConvertTo-HTML -Head $webstyle -Body (
         "<img src='$WebLogoPath'/><br>",
-        '<titlesection>$HtmlTitle</titlesection><br>',
-        '<datesection>Report last run on", $date, "</datesection><p>'
+        "<titlesection>$HtmlTitle</titlesection><br>",
+        "<datesection>Report last run on $ReportDate</datesection><p>"
       ) |
       Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
