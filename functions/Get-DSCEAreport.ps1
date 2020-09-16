@@ -103,6 +103,7 @@ This command returns non-compliant configuration file items detected, grouped by
   # Default Variables
   #----------------------------------------------------------------------------------------------------------------------#
   $ProgramPath = Join-Path -Path 'C:\ProgramData' -ChildPath 'DSCEA'
+  $HtmlTitle = 'DSC Configuration Report'
   #----------------------------------------------------------------------------------------------------------------------#
   # Collect Module Directory Paths
   #----------------------------------------------------------------------------------------------------------------------#
@@ -179,7 +180,7 @@ This command returns non-compliant configuration file items detected, grouped by
       ) |
       ConvertTo-HTML -Head $webstyle -Body (
         "<img src='$WebLogoPath'/><br>",
-        '<titlesection>DSC Configuration Report</titlesection><br>',
+        '<titlesection>$HtmlTitle</titlesection><br>',
         '<datesection>Report last run on", $date, "</datesection><p>'
       ) |
       Set-Content -Path $HtmlExportPath -Encoding 'unicode'
@@ -204,9 +205,9 @@ This command returns non-compliant configuration file items detected, grouped by
             }
           } |
           ConvertTo-HTML -Head $webstyle -Body (
-            "<img src='C:\ProgramData\DSCEA\logo.png'/><br>",
-            "<titlesection>DSC Configuration Report</titlesection><br>",
-            "<datesection>Report last run on", $date, "</datesection><p>"
+            "<img src='$WebLogoPath'/><br>",
+            "<titlesection>$HtmlTitle</titlesection><br>",
+            "<datesection>Report last run on $ReportDate</datesection><p>"
           ) |
           Set-Content -Path $HtmlExportPath -Encoding 'unicode'
     Get-ItemProperty -Path $HtmlExportPath
@@ -221,7 +222,7 @@ This command returns non-compliant configuration file items detected, grouped by
         $_.ResourcesNotInDesiredState | ForEach-Object { $_ | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState }
       }
     } | Where-object { $_.InstanceName -ieq $ItemName } |
-    ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>DSC Configuration Report</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
+    ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>$HtmlTitle</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
     Out-File (Join-Path -Path $OutPath -ChildPath "ItemComplianceReport-$ItemName.html")
     Get-ItemProperty (Join-Path -Path $OutPath -ChildPath "ItemComplianceReport-$ItemName.html")
   }
@@ -234,7 +235,7 @@ This command returns non-compliant configuration file items detected, grouped by
         $_.ResourcesNotInDesiredState | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
         $_.ResourcesInDesiredState | Select-Object @{Name = "Computer"; Expression = { $_.PSComputerName } }, ResourceName, InstanceName, InDesiredState
       }
-    } | ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>DSC Configuration Report</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
+    } | ConvertTo-HTML -Head $webstyle -body "<img src='C:\ProgramData\DSCEA\logo.png'/><br>", "<titlesection>$HtmlTitle</titlesection><br>", "<datesection>Report last run on", $date, "</datesection><p>" |
     Out-File (Join-Path -Path $OutPath -ChildPath "ComputerComplianceReport-$ComputerName.html")
     Get-ItemProperty (Join-Path -Path $OutPath -ChildPath "ComputerComplianceReport-$ComputerName.html")
   }
