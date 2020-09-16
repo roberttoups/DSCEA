@@ -286,7 +286,7 @@ This command executes a DSCEA scan against the systems supplied as machine speci
           }
           return
         }
-        $compliance = Receive-Job $DSCJob -ErrorVariable JobFailedError
+        $Compliance = Receive-Job $DSCJob -ErrorVariable JobFailedError
         Remove-Job $DSCJob
       } catch {
         $JobFailedError = $_
@@ -296,14 +296,14 @@ This command executes a DSCEA scan against the systems supplied as machine speci
     if($PSBoundParameters.ContainsKey('CimSession')) {
       return [PSCustomObject]@{
         RunTime    = $runTime
-        Compliance = $compliance
+        Compliance = $Compliance
         Exception  = $JobFailedError
-        Computer   = $cimsession.ComputerName
+        Computer   = $CimSession.ComputerName
       }
     } else {
       return [PSCustomObject]@{
         RunTime    = $runTime
-        Compliance = $compliance
+        Compliance = $Compliance
         Exception  = $JobFailedError
         Computer   = $computer
       }
