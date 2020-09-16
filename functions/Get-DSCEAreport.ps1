@@ -134,7 +134,7 @@ This command returns non-compliant configuration file items detected, grouped by
             throw "($ErrorMessage): $SpecificReason Exiting."
           }
         }
-        $LogoPath = Get-ChildItem -Path $PSModulePath-Filter 'logo.png' -Recurse -File |
+        $LogoPath = Get-ChildItem -Path $PSModulePath -Filter 'logo.png' -Recurse -File |
           Select-Object -First 1 |
           Select-Object -ExpandProperty 'FullName'
 
